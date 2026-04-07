@@ -1,0 +1,34 @@
+# Environment
+.env
+*.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+*.egg-info/
+.coverage
+htmlcov/
+
+# Data (never commit raw PDFs or processed chunks)
+data/raw/
+data/processed/
+
+# Models (downloaded at runtime)
+models/
+*.bin
+*.safetensors
+
+# Docker volumes
+qdrant_storage/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
