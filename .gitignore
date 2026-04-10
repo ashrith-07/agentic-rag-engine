@@ -32,3 +32,19 @@ qdrant_storage/
 # IDE
 .vscode/
 .idea/
+
+# Virtual Environments (CRITICAL)
+.venv/
+venv/
+env/
+
+# Logs (Your observability stack will generate these, don't commit them)
+logs/
+*.log
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
+
+# Redis Data (If you map your Redis cache to a local volume)
+redis_data/
+dump.rdb
