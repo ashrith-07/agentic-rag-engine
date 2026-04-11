@@ -33,10 +33,13 @@ print(f"  pages={doc.total_pages}, chars={len(doc.raw_markdown)}, doc_id={doc.do
 strategies = ["fixed", "semantic", "hierarchical", "structure"]
 for strategy in strategies:
     chunks = chunk_document(doc, strategy=strategy)
-    token_counts = [c.metadata.token_count for c in chunks]
     print(f"\n✓ {strategy.upper()} strategy: {len(chunks)} chunks")
-    print(f"  min={min(token_counts)} max={max(token_counts)} avg={sum(token_counts)//len(token_counts)} tokens")
-    print(f"  sample: '{chunks[0].text[:80]}...'")
+    if chunks:
+        token_counts = [c.metadata.token_count for c in chunks]
+        print(f"  min={min(token_counts)} max={max(token_counts)} avg={sum(token_counts)//len(token_counts)} tokens")
+        print(f"  sample: '{chunks[0].text[:80]}...'")
+    else:
+        print("  ⚠️  No chunks produced — PDF may have no extractable text")
 
 # ── Test AdaptiveChunker ──────────────────────────────────────────────────────
 print("\n── AdaptiveChunker ──")
@@ -48,12 +51,13 @@ print(f"  signals: {det.signals}")
 print(f"  total chunks: {len(chunks)}")
 
 # ── Verify metadata integrity ─────────────────────────────────────────────────
-sample = chunks[0]
-print(f"\n✓ Metadata sample:")
-print(f"  chunk_id={sample.metadata.chunk_id}")
-print(f"  doc_id={sample.metadata.doc_id[:12]}...")
-print(f"  strategy={sample.metadata.strategy_used}")
-print(f"  tokens={sample.metadata.token_count}")
-print(f"  total_chunks={sample.metadata.total_chunks}")
+if chunks:
+    sample = chunks[0]
+    print(f"\n✓ Metadata sample:")
+    print(f"  chunk_id={sample.metadata.chunk_id}")
+    print(f"  doc_id={sample.metadata.doc_id[:12]}...")
+    print(f"  strategy={sample.metadata.strategy_used}")
+    print(f"  tokens={sample.metadata.token_count}")
+    print(f"  total_chunks={sample.metadata.total_chunks}")
 
 print("\n✅ Phase 3 complete — all chunking strategies working")

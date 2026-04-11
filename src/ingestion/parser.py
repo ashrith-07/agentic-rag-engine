@@ -9,13 +9,80 @@ import pymupdf
 from src.ingestion.metadata import ParsedDocument, compute_doc_id
 from src.utils.correlation_id import get_correlation_id
 
+# Tesseract + OCR imports (optional — only used for image-based PDFs)
+try:
+    import pytesseract
+    from pdf2image import convert_from_path
+    pytesseract.pytesseract.tesseract_cmd = "/opt/homebrew/bin/tesseract"
+    _OCR_AVAILABLE = True
+except ImportError:
+    _OCR_AVAILABLE = False
+
+
+_POPPLER_PATH = "/opt/homebrew/bin"   # macOS Homebrew default
+
+
+def _is_image_pdf(doc: pymupdf.Document) -> bool:
+    """
+    Return True if the PDF has no extractable text (scanned/image-only).
+    Checks the first 3 pages — if all yield < 20 chars, treat as image PDF.
+    """
+    sample = min(3, len(doc))
+    char_counts = [len(doc[i].get_text("text").strip()) for i in range(sample)]
+    return all(c < 20 for c in char_counts)
+
+
+def _ocr_pdf(pdf_path: str, total_pages: int) -> tuple[str, list[dict]]:
+    """
+    OCR a scanned PDF using Tesseract (via pdf2image).
+
+    Returns:
+        (full_markdown_text, per_page_list)
+    """
+    if not _OCR_AVAILABLE:
+        raise RuntimeError(
+            "pytesseract / pdf2image not installed. "
+            "Run: pip install pytesseract pdf2image  &&  brew install tesseract poppler"
+        )
+
+    logger.info(f"Image-based PDF detected — running Tesseract OCR at 300 DPI")
+    images = convert_from_path(str(pdf_path), dpi=300, poppler_path=_POPPLER_PATH)
+
+    pages: list[dict] = []
+    full_text_parts: list[str] = []
+
+    for idx, img in enumerate(images):
+        page_text = pytesseract.image_to_string(img, lang="eng")
+        page_text = page_text.strip()
+        full_text_parts.append(page_text)
+
+        has_table = "|" in page_text and page_text.count("|") >= 4
+        has_code = "```" in page_text or bool(re.search(r"\bdef \b|\bclass \b|\bimport \b", page_text))
+
+        pages.append({
+            "page_number": idx + 1,
+            "text": page_text,
+            "has_table": has_table,
+            "has_code": has_code,
+            "char_count": len(page_text),
+        })
+
+    # Build a simple markdown representation from OCR text
+    full_markdown = "\n\n---\n\n".join(
+        f"<!-- page {i + 1} -->\n{t}" for i, t in enumerate(full_text_parts)
+    )
+    return full_markdown, pages
+
 
 def parse_pdf(pdf_path: str | Path) -> ParsedDocument:
     """
-    Parse a PDF file into structured markdown using pymupdf4llm.
+    Parse a PDF file into structured markdown.
+
+    For text-based PDFs: uses pymupdf4llm (preserves tables, headings).
+    For image/scanned PDFs: falls back to Tesseract OCR automatically.
 
     Returns a ParsedDocument with:
-    - Full markdown string (tables preserved, headings detected)
+    - Full markdown string
     - Per-page breakdown with table/code presence flags
     - doc_id (sha256 of binary) for deduplication
 
@@ -35,37 +102,44 @@ def parse_pdf(pdf_path: str | Path) -> ParsedDocument:
 
     logger.info(f"[{cid}] Parsing PDF: {path.name}")
 
-    # Read raw bytes for doc_id
+    # Read raw bytes for doc_id computation (stable identifier)
     pdf_bytes = path.read_bytes()
     doc_id = compute_doc_id(pdf_bytes)
 
-    # Extract full markdown (preserves tables as markdown tables)
-    raw_markdown = pymupdf4llm.to_markdown(str(path))
-
-    # Open with pymupdf for per-page info
+    # Open with pymupdf to probe for text vs image pages
     doc = pymupdf.open(str(path))
     total_pages = len(doc)
-    pages = []
 
-    for page_num in range(total_pages):
-        page = doc[page_num]
-        page_text = page.get_text("text")
+    if _is_image_pdf(doc):
+        # ── Scanned / image-based PDF → OCR fallback ─────────────────────────
+        logger.warning(
+            f"[{cid}] {path.name} appears to be a scanned PDF "
+            f"(no embedded text). Falling back to Tesseract OCR."
+        )
+        doc.close()
+        raw_markdown, pages = _ocr_pdf(str(path), total_pages)
 
-        # Detect tables: look for pipe characters (markdown table indicator)
-        has_table = "|" in page_text and page_text.count("|") >= 4
+    else:
+        # ── Text-based PDF → pymupdf4llm (fast, table-preserving) ────────────
+        raw_markdown = pymupdf4llm.to_markdown(str(path))
+        pages = []
 
-        # Detect code blocks: look for code fence markers or indented blocks
-        has_code = "```" in page_text or "    " in page_text
+        for page_num in range(total_pages):
+            page = doc[page_num]
+            page_text = page.get_text("text")
 
-        pages.append({
-            "page_number": page_num + 1,
-            "text": page_text.strip(),
-            "has_table": has_table,
-            "has_code": has_code,
-            "char_count": len(page_text),
-        })
+            has_table = "|" in page_text and page_text.count("|") >= 4
+            has_code = "```" in page_text or "    " in page_text
 
-    doc.close()
+            pages.append({
+                "page_number": page_num + 1,
+                "text": page_text.strip(),
+                "has_table": has_table,
+                "has_code": has_code,
+                "char_count": len(page_text),
+            })
+
+        doc.close()
 
     logger.info(
         f"[{cid}] Parsed {path.name}: "
