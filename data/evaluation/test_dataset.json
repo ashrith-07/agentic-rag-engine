@@ -1,0 +1,169 @@
+[
+  {
+    "query_id": "97bc5688-3f54-46a5-91de-d04303e982bc",
+    "query": "What is the main objective of the assignment?",
+    "difficulty": "easy",
+    "query_type": "factual",
+    "relevant_chunk_ids": [
+      "2e299495-b372-4270-b6e3-ce579f694e39"
+    ],
+    "expected_keywords": [
+      "RAG",
+      "pipeline"
+    ],
+    "source_doc": "RAG-Assignment.pdf",
+    "generated_by": "llama-3.3-70b-versatile",
+    "reviewed": false
+  },
+  {
+    "query_id": "b6908ac1-205e-44c7-9e96-ea3b197a4dec",
+    "query": "What are the different chunking strategies that need to be implemented?",
+    "difficulty": "medium",
+    "query_type": "factual",
+    "relevant_chunk_ids": [
+      "2e299495-b372-4270-b6e3-ce579f694e39"
+    ],
+    "expected_keywords": [
+      "fixed-size",
+      "semantic",
+      "hierarchical"
+    ],
+    "source_doc": "RAG-Assignment.pdf",
+    "generated_by": "llama-3.3-70b-versatile",
+    "reviewed": false
+  },
+  {
+    "query_id": "93fcc3d3-73fc-46db-a553-735365a027d7",
+    "query": "How should the system handle tables, images, and special formatting during chunking?",
+    "difficulty": "medium",
+    "query_type": "analytical",
+    "relevant_chunk_ids": [
+      "2e299495-b372-4270-b6e3-ce579f694e39"
+    ],
+    "expected_keywords": [
+      "tables",
+      "images",
+      "formatting"
+    ],
+    "source_doc": "RAG-Assignment.pdf",
+    "generated_by": "llama-3.3-70b-versatile",
+    "reviewed": false
+  },
+  {
+    "query_id": "dd4f109f-8c57-4fd9-a29c-21baee95734a",
+    "query": "What are the requirements for the deliverables of the chunking implementation task?",
+    "difficulty": "easy",
+    "query_type": "factual",
+    "relevant_chunk_ids": [
+      "2e299495-b372-4270-b6e3-ce579f694e39"
+    ],
+    "expected_keywords": [
+      "working code",
+      "justification document"
+    ],
+    "source_doc": "RAG-Assignment.pdf",
+    "generated_by": "llama-3.3-70b-versatile",
+    "reviewed": false
+  },
+  {
+    "query_id": "be410159-51be-4d96-866a-c3a97e4cba73",
+    "query": "What are the key considerations for selecting an embedding model for vector storage?",
+    "difficulty": "hard",
+    "query_type": "analytical",
+    "relevant_chunk_ids": [
+      "2e299495-b372-4270-b6e3-ce579f694e39"
+    ],
+    "expected_keywords": [
+      "embedding model",
+      "computational requirements"
+    ],
+    "source_doc": "RAG-Assignment.pdf",
+    "generated_by": "llama-3.3-70b-versatile",
+    "reviewed": false
+  },
+  {
+    "query_id": "00f38760-7e07-4607-a717-24a8ad14f64b",
+    "query": "What are the evaluation metrics for retrieval evaluation?",
+    "difficulty": "easy",
+    "query_type": "factual",
+    "relevant_chunk_ids": [
+      "cb0d4605-8f7b-4384-a6d6-f872021fd989"
+    ],
+    "expected_keywords": [
+      "Precision@K",
+      "Recall@K",
+      "MRR"
+    ],
+    "source_doc": "RAG-Assignment.pdf",
+    "generated_by": "llama-3.3-70b-versatile",
+    "reviewed": false
+  },
+  {
+    "query_id": "8b086246-88db-414c-abc0-9988696d8081",
+    "query": "How does the re-ranking implementation affect the performance of the system?",
+    "difficulty": "medium",
+    "query_type": "analytical",
+    "relevant_chunk_ids": [
+      "cb0d4605-8f7b-4384-a6d6-f872021fd989"
+    ],
+    "expected_keywords": [
+      "re-ranking",
+      "latency",
+      "quality"
+    ],
+    "source_doc": "RAG-Assignment.pdf",
+    "generated_by": "llama-3.3-70b-versatile",
+    "reviewed": false
+  },
+  {
+    "query_id": "89d76edb-bc74-4c85-9d2d-b86bd8d37595",
+    "query": "What is the purpose of implementing batch processing for large documents?",
+    "difficulty": "easy",
+    "query_type": "factual",
+    "relevant_chunk_ids": [
+      "cb0d4605-8f7b-4384-a6d6-f872021fd989"
+    ],
+    "expected_keywords": [
+      "batch processing",
+      "large documents",
+      "indexing"
+    ],
+    "source_doc": "RAG-Assignment.pdf",
+    "generated_by": "llama-3.3-70b-versatile",
+    "reviewed": false
+  },
+  {
+    "query_id": "27c50fb2-9295-4984-9ab1-7ae28ee32d95",
+    "query": "Compare the different re-ranking methods mentioned in the text.",
+    "difficulty": "hard",
+    "query_type": "comparative",
+    "relevant_chunk_ids": [
+      "cb0d4605-8f7b-4384-a6d6-f872021fd989"
+    ],
+    "expected_keywords": [
+      "cross-encoder",
+      "query-document",
+      "diversity-based"
+    ],
+    "source_doc": "RAG-Assignment.pdf",
+    "generated_by": "llama-3.3-70b-versatile",
+    "reviewed": false
+  },
+  {
+    "query_id": "de692791-32bd-4f0c-bb00-121b7537a48e",
+    "query": "What are the deliverables for the LLM integration and evaluation task?",
+    "difficulty": "medium",
+    "query_type": "factual",
+    "relevant_chunk_ids": [
+      "cb0d4605-8f7b-4384-a6d6-f872021fd989"
+    ],
+    "expected_keywords": [
+      "RAG pipeline",
+      "response quality",
+      "hallucination detection"
+    ],
+    "source_doc": "RAG-Assignment.pdf",
+    "generated_by": "llama-3.3-70b-versatile",
+    "reviewed": false
+  }
+]
