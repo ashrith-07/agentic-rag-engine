@@ -173,7 +173,10 @@ class VectorStore:
                 PointStruct(
                     id=chunk.metadata.chunk_id,
                     vector=vector,
-                    payload=chunk.metadata.to_qdrant_payload(),
+                    payload={
+                        **chunk.metadata.to_qdrant_payload(),
+                        "text": chunk.text,
+                    },
                 )
                 for chunk, vector in zip(batch_chunks, batch_vectors)
             ]

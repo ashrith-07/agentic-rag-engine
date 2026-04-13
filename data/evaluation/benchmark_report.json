@@ -9,8 +9,8 @@
     ],
     "total_queries": 10,
     "evaluated_queries": 10,
-    "total_time_ms": 8092.82,
-    "avg_retrieval_latency_ms": 809.23
+    "total_time_ms": 723.12,
+    "avg_retrieval_latency_ms": 72.27
   },
   "retrieval_metrics": {
     "num_queries": 10,
