@@ -26,7 +26,15 @@ redis:
 	@echo "Redis → localhost:6379"
 
 test:
-	pytest tests/ -v --cov=src --cov-report=term-missing
+	.venv/bin/pytest tests/ -v \
+		--cov=src/ingestion \
+		--cov=src/retrieval \
+		--cov=src/reranking \
+		--cov=src/llm \
+		--cov=src/pipeline.py \
+		--cov=src/evaluation/retrieval_metrics.py \
+		--cov=src/utils \
+		--cov-report=term-missing
 
 ingest:
 	@test -n "$(PDF)" || (echo "Usage: make ingest PDF=./data/raw/doc.pdf" && exit 1)
