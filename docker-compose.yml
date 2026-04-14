@@ -28,16 +28,13 @@ services:
     restart: unless-stopped
 
   app:
-    build:
-      context: .
-      dockerfile: services/app/Dockerfile
+    image: ashrithr07/agentic-rag-engine:latest
     container_name: rag_app
     ports:
       - "8000:8000"
     volumes:
-      - ./src:/app/src
-      - ./configs:/app/configs
       - ./data:/app/data
+      - ./configs:/app/configs
     environment:
       - QDRANT_HOST=qdrant
       - QDRANT_PORT=6333
@@ -54,18 +51,15 @@ services:
     restart: unless-stopped
 
   dashboard:
-    build:
-      context: .
-      dockerfile: services/app/Dockerfile
+    image: ashrithr07/agentic-rag-engine:latest
     container_name: rag_dashboard
     command: streamlit run dashboard/app.py --server.port 8501 --server.address 0.0.0.0
     ports:
       - "8501:8501"
     volumes:
-      - ./src:/app/src
+      - ./data:/app/data
       - ./dashboard:/app/dashboard
       - ./configs:/app/configs
-      - ./data:/app/data
     environment:
       - API_URL=http://app:8000
       - PYTHONPATH=/app
