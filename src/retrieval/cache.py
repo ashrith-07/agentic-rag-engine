@@ -13,8 +13,14 @@ from src.utils.correlation_id import get_correlation_id
 def _make_redis_client() -> redis.Redis:
     from src.config import settings
 
+    host = settings.redis_host.strip()
+    if host.startswith("https://"):
+        host = host[8:]
+    elif host.startswith("http://"):
+        host = host[7:]
+
     kwargs = dict(
-        host=settings.redis_host,
+        host=host,
         port=settings.redis_port,
         db=0,
         decode_responses=False,
