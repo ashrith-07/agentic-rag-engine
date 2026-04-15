@@ -111,7 +111,7 @@ class RAGPipeline:
 
     def __init__(self) -> None:
         self._ingested_chunks: list[Chunk] = []
-        vector_store.ensure_collections()
+        # vector_store.ensure_collections() # Lazy-loaded or handled in app startup
         logger.info("RAGPipeline initialized")
 
     # ── Ingestion ─────────────────────────────────────────────────────────────
@@ -127,6 +127,15 @@ class RAGPipeline:
         """
         cid = set_correlation_id()
         logger.info(f"[{cid}] Ingesting: {pdf_path}")
+
+        try:
+            vector_store.ensure_collections()
+        except Exception as e:
+            logger.error(f"Failed to connect to Qdrant: {e}. Are HF Secret variables QDRANT_HOST and QDRANT_API_KEY set? Consider checking Hugging Face Space settings.")
+            raise Exception("Failed to connect to Qdrant Cloud. Check HF Space Secrets.") from e
+
+        try:n            vector_store.ensure_collections()n        except Exception as e:n            logger.error(f"Failed to connect to Qdrant: {e}. Are HF Secret variables QDRANT_HOST and QDRANT_API_KEY set?")n            raise
+
 
         # Parse
         doc = parse_pdf(pdf_path)
