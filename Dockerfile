@@ -8,8 +8,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# CPU-only torch first
+# CPU-only torch first + numpy < 2.0 to avoid PyTorch/Transformers compiler mismatches
 RUN pip install --no-cache-dir \
+    "numpy<2.0.0" \
     torch==2.2.2+cpu \
     --index-url https://download.pytorch.org/whl/cpu
 
