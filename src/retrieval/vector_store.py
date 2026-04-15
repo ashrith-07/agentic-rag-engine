@@ -25,17 +25,32 @@ from src.utils.timer import timed
 def _make_client() -> QdrantClient:
     from src.config import settings
 
-    # Cloud mode — uses HTTPS + API key
+    host = settings.qdrant_host.strip()
+    if host.startswith("http"):
+        # User provided a full URL in QDRANT_HOST
+        if settings.qdrant_api_key:
+            return QdrantClient(
+                url=host,
+                api_key=settings.qdrant_api_key,
+                timeout=30,
+            )
+        return QdrantClient(
+            url=host,
+            timeout=30,
+        )
+
+    # User provided just a hostname
+    # Cloud mode - uses HTTPS + API key
     if settings.qdrant_api_key:
         return QdrantClient(
-            url=f"https://{settings.qdrant_host}",
+            url=f"https://{host}",
             api_key=settings.qdrant_api_key,
             timeout=30,
         )
 
-    # Local mode — plain HTTP
+    # Local mode - plain HTTP
     return QdrantClient(
-        host=settings.qdrant_host,
+        host=host,
         port=settings.qdrant_port,
         timeout=30,
     )
