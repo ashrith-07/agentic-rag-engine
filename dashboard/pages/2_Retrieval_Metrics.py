@@ -24,7 +24,7 @@ with col_load:
                 st.session_state["benchmark_report"] = json.load(f)
             st.success("Report loaded")
         else:
-            st.warning("No report found. Run benchmark first.")
+            st.warning("No queries ran till now. Click 'Generate Test Dataset' and then 'Run benchmark now' to run your first evaluation.")
 
 with col_gen:
     if st.button("📝 Generate Test Dataset", use_container_width=True):
@@ -53,11 +53,16 @@ with col_run:
 
 report = st.session_state.get("benchmark_report")
 if not report:
-    st.info("Load a report or run the benchmark to see results.")
+    st.info("👋 Welcome! Click **Load last report** to view past metrics, or generate a test dataset and run a new benchmark.")
     st.stop()
 
 cfg = report.get("benchmark_config", {})
 metrics = report.get("retrieval_metrics", {})
+evaluated_queries = cfg.get("evaluated_queries", 0)
+
+if evaluated_queries == 0:
+    st.warning("No queries ran till now. Please click 'Generate Test Dataset' over ingested documents and then click 'Run benchmark now'.")
+    st.stop()
 
 st.divider()
 render_metric_row(
