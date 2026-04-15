@@ -15,7 +15,7 @@ st.caption("Evaluation results from your test dataset")
 API_URL = st.session_state.get("api_url", "http://0.0.0.0:8000")
 REPORT_PATH = Path("data/evaluation/benchmark_report.json")
 
-col_load, col_run = st.columns([1, 1])
+col_load, col_gen, col_run = st.columns([1, 1, 1])
 
 with col_load:
     if st.button("📂 Load last report", use_container_width=True):
@@ -25,6 +25,18 @@ with col_load:
             st.success("Report loaded")
         else:
             st.warning("No report found. Run benchmark first.")
+
+with col_gen:
+    if st.button("📝 Generate Test Dataset", use_container_width=True):
+        with st.spinner("Generating 15 QA pairs from ingested documents (takes ~20s)..."):
+            try:
+                resp = httpx.post(f"{API_URL}/eval/generate?target_size=15", timeout=120)
+                if resp.status_code == 200:
+                    st.success(f"Generated {resp.json().get('num_pairs')} evaluation pairs!")
+                else:
+                    st.error(f"Generation failed: {resp.text}")
+            except Exception as e:
+                st.error(f"Error: {e}")
 
 with col_run:
     if st.button("▶️ Run benchmark now", use_container_width=True, type="primary"):

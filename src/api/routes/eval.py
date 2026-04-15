@@ -51,6 +51,55 @@ async def run_eval(background_tasks: BackgroundTasks) -> EvalResponse:
     )
 
 
+@router.post("/generate")
+async def generate_eval_dataset(target_size: int = 15) -> dict:
+    """
+    Generate an evaluation dataset from the uploaded documents in data/raw/.
+    """
+    cid = set_correlation_id()
+    logger.info(f"[{cid}] Generating new test dataset via API")
+
+    raw_dir = Path("data/raw")
+    pdf_files = list(raw_dir.glob("*.pdf"))
+
+    if not pdf_files:
+        raise HTTPException(
+            status_code=400,
+            detail="No PDFs found in data/raw/. Upload a document first."
+        )
+
+    from src.ingestion.chunker import chunk_document, Chunk
+    from src.ingestion.parser import parse_pdf
+    from src.evaluation.test_dataset_generator import generate_test_dataset
+
+    all_chunks: list[Chunk] = []
+    for pdf_path in pdf_files:
+        try:
+            doc = parse_pdf(pdf_path)
+            chunks = chunk_document(doc, strategy="auto")
+            all_chunks.extend(chunks)
+        except Exception as e:
+            logger.error(f"[{cid}] Skipping {pdf_path.name} due to parse error: {e}")
+
+    if not all_chunks:
+        raise HTTPException(
+            status_code=400,
+            detail="Failed to extract any text chunks from the uploaded documents."
+        )
+
+    try:
+        dataset = generate_test_dataset(all_chunks, target_size=target_size)
+    except Exception as e:
+        logger.error(f"[{cid}] Dataset generation failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Dataset generation failed: {e}")
+
+    return {
+        "message": "Dataset generated successfully",
+        "num_pairs": len(dataset),
+        "target_size": target_size,
+    }
+
+
 @router.get("/report")
 async def get_report() -> dict:
     """
