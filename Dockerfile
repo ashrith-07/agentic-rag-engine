@@ -11,7 +11,7 @@ WORKDIR /app
 # CPU-only torch first + numpy < 2.0 to avoid PyTorch/Transformers compiler mismatches
 RUN pip install --no-cache-dir \
     "numpy<2.0.0" \
-    torch==2.2.2+cpu \
+    "torch>=2.4.0" \
     --index-url https://download.pytorch.org/whl/cpu
 
 # Install project
