@@ -16,7 +16,7 @@ with st.sidebar:
 
     api_url = st.text_input(
         "API URL",
-        value="http://127.0.0.1:8000",
+        value="http://0.0.0.0:8000",
         help="FastAPI backend URL",
     )
     st.session_state["api_url"] = api_url

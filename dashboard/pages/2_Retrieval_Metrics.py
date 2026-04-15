@@ -12,7 +12,7 @@ st.set_page_config(page_title="Retrieval Metrics", page_icon="📊", layout="wid
 st.title("📊 Retrieval Metrics")
 st.caption("Evaluation results from your test dataset")
 
-API_URL = st.session_state.get("api_url", "http://127.0.0.1:8000")
+API_URL = st.session_state.get("api_url", "http://0.0.0.0:8000")
 REPORT_PATH = Path("data/evaluation/benchmark_report.json")
 
 col_load, col_run = st.columns([1, 1])
