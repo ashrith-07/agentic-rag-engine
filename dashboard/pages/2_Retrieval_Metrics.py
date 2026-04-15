@@ -21,8 +21,14 @@ with col_load:
     if st.button("📂 Load last report", use_container_width=True):
         if REPORT_PATH.exists():
             with open(REPORT_PATH) as f:
-                st.session_state["benchmark_report"] = json.load(f)
-            st.success("Report loaded")
+                data = json.load(f)
+            # If hit_rate is perfectly 0, it means it's a corrupted/empty offline artifact
+            if data.get("retrieval_metrics", {}).get("hit_rate", 0) == 0.0:
+                st.warning("No valid queries ran till now. Click 'Generate Test Dataset' and then 'Run benchmark now' to run your first evaluation.")
+                st.session_state.pop("benchmark_report", None)
+            else:
+                st.session_state["benchmark_report"] = data
+                st.success("Report loaded")
         else:
             st.warning("No queries ran till now. Click 'Generate Test Dataset' and then 'Run benchmark now' to run your first evaluation.")
 
@@ -60,8 +66,9 @@ cfg = report.get("benchmark_config", {})
 metrics = report.get("retrieval_metrics", {})
 evaluated_queries = cfg.get("evaluated_queries", 0)
 
-if evaluated_queries == 0:
-    st.warning("No queries ran till now. Please click 'Generate Test Dataset' over ingested documents and then click 'Run benchmark now'.")
+# Also block rendering if hit rate perfectly 0 (a corrupted or unauthenticated offline artifact)
+if evaluated_queries == 0 or metrics.get("hit_rate", 0) == 0.0:
+    st.warning("No valid queries ran till now. Please click 'Generate Test Dataset' over ingested documents and then click 'Run benchmark now'.")
     st.stop()
 
 st.divider()
