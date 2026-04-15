@@ -21,7 +21,6 @@
 - [How It Works](#-how-it-works)
 - [Setup Instructions](#-setup-instructions)
 - [Environment Variables](#-environment-variables)
-- [API Documentation](#-api-documentation)
 - [Dashboard](#-dashboard)
 - [Evaluation & Benchmarks](#-evaluation--benchmarks)
 - [Folder Structure](#-folder-structure)
@@ -51,8 +50,6 @@ This project addresses all three failure modes: hybrid retrieval with RRF fusion
 | Resource | URL |
 |---|---|
 | 📊 Interactive Dashboard | [huggingface.co/spaces/ashrithr07/agentic-rag-engine](https://huggingface.co/spaces/ashrithr07/agentic-rag-engine) |
-| 📡 API Documentation | [ashrithr07-agentic-rag-engine.hf.space/docs](https://ashrithr07-agentic-rag-engine.hf.space/docs) |
-| ❤️ Health Endpoint | [ashrithr07-agentic-rag-engine.hf.space/health](https://ashrithr07-agentic-rag-engine.hf.space/health) |
 
 Upload any PDF, query it in natural language, and inspect retrieval scores, per-stage latency waterfall charts, token costs, and hallucination audit results — all from the browser.
 
