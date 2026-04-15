@@ -19,6 +19,16 @@ short_description: Agentic RAG Engine with FastAPI and Streamlit.
 
 ---
 
+## Live Demo
+
+| Service | URL |
+|---|---|
+| 🚀 Dashboard | https://huggingface.co/spaces/ashrithr07/agentic-rag-engine |
+| 📖 API Docs | https://ashrithr07-agentic-rag-engine.hf.space/docs |
+| ❤️ Health | https://ashrithr07-agentic-rag-engine.hf.space/health |
+
+---
+
 ## What makes this different
 
 | Feature | This project | Typical RAG submission |
