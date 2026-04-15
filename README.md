@@ -1,4 +1,3 @@
----
 # Agentic RAG Engine
 
 > A production-grade Retrieval-Augmented Generation pipeline that doesn't just answer questions — it explains **why** it answered the way it did, **where** the information came from, and **how confident** it is.
@@ -9,7 +8,9 @@
 [![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python)](https://www.python.org/)
 [![Tests](https://img.shields.io/badge/Tests-78%20passed%20%7C%2082%25%20coverage-brightgreen)](tests/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+
 ---
+
 ## Table of Contents
 
 - [Problem Statement](#-problem-statement)
@@ -36,7 +37,9 @@
 Standard RAG implementations suffer from three recurring failure modes that make them unsuitable for production:
 
 1. **Retrieval quality degrades on complex queries.** Single-strategy dense retrieval misses passages that exact keyword search would find. Most toy implementations use FAISS + a for-loop — no fusion, no re-ranking, no diversity enforcement.
+
 2. **LLMs hallucinate without detection.** Generated answers can be plausible and fluent while being entirely ungrounded in the retrieved context. Without a verification layer, errors propagate silently to the user.
+
 3. **Agentic pipelines are prompt injection targets.** Systems that route queries through an LLM before retrieval can be hijacked via adversarial prompts — wasting compute or leaking system behaviour.
 
 This project addresses all three failure modes: hybrid retrieval with RRF fusion and cross-encoder re-ranking eliminates the first, a hardened query router that fails closed on adversarial input eliminates the third, and an independent hallucination auditor that verifies every generated answer against its source passages before delivery eliminates the second.
@@ -45,12 +48,11 @@ This project addresses all three failure modes: hybrid retrieval with RRF fusion
 
 ## 🚀 Live Demo
 
-
-| Resource                 | URL                                                                                                                |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| Resource | URL |
+|---|---|
 | 📊 Interactive Dashboard | [huggingface.co/spaces/ashrithr07/agentic-rag-engine](https://huggingface.co/spaces/ashrithr07/agentic-rag-engine) |
-| 📡 API Documentation     | [ashrithr07-agentic-rag-engine.hf.space/docs](https://ashrithr07-agentic-rag-engine.hf.space/docs)                 |
-| ❤️ Health Endpoint     | [ashrithr07-agentic-rag-engine.hf.space/health](https://ashrithr07-agentic-rag-engine.hf.space/health)             |
+| 📡 API Documentation | [ashrithr07-agentic-rag-engine.hf.space/docs](https://ashrithr07-agentic-rag-engine.hf.space/docs) |
+| ❤️ Health Endpoint | [ashrithr07-agentic-rag-engine.hf.space/health](https://ashrithr07-agentic-rag-engine.hf.space/health) |
 
 Upload any PDF, query it in natural language, and inspect retrieval scores, per-stage latency waterfall charts, token costs, and hallucination audit results — all from the browser.
 
@@ -93,39 +95,38 @@ graph TD
 
 ## ⚙️ Tech Stack
 
-
-| Layer                   | Tool                                   | Notes                                       |
-| ----------------------- | -------------------------------------- | ------------------------------------------- |
-| **Language**            | Python 3.13                            | `>=3.11` compliant                          |
-| **LLM**                 | Groq`llama-3.3-70b-versatile`          | ~800 tok/s, 128k context, JSON mode         |
-| **LLM SDK**             | `groq>=0.9.0`                          | Async + sync, tenacity 3× retry            |
-| **LLM Eval Backend**    | `langchain-groq>=0.1.0`                | RAGAS integration                           |
-| **PDF Parsing**         | `pymupdf4llm>=0.0.17`                  | Markdown-preserving, table-aware            |
-| **Chunking**            | Custom classes                         | 4 strategies + AdaptiveChunker              |
-| **NLP**                 | spaCy`en_core_web_sm`                  | Sentence segmentation                       |
-| **Token Counting**      | `tiktoken` cl100k_base                 | Consistent across pipeline                  |
-| **Primary Embedding**   | `BAAI/bge-base-en-v1.5`                | 768-dim, MTEB 63.55, ~45ms/chunk CPU        |
-| **Secondary Embedding** | `all-MiniLM-L6-v2`                     | 384-dim, MTEB 56.26, ~12ms/chunk CPU        |
-| **Vector DB (local)**   | Qdrant v1.9.2 (Docker)                 | gRPC + REST                                 |
-| **Vector DB (cloud)**   | Qdrant Cloud                           | Free 1GB persistent cluster                 |
-| **Client Pin**          | `qdrant-client==1.9.2`                 | Must match server version                   |
-| **Sparse Retrieval**    | `rank-bm25` (BM25Okapi)                | Persisted index                             |
-| **Re-ranker**           | `cross-encoder/ms-marco-MiniLM-L-6-v2` | ~150ms for 20 candidate pairs               |
-| **Cache (local)**       | Redis 7.2-alpine (Docker)              |                                             |
-| **Cache (cloud)**       | Upstash Redis                          | SSL, free 10k cmds/day                      |
-| **Evaluation**          | RAGAS + 6 custom metrics               | 10 total metrics                            |
-| **API**                 | FastAPI + uvicorn                      | Fully async throughout                      |
-| **UI**                  | Streamlit + Plotly                     | 4 pages                                     |
-| **Config**              | Pydantic Settings                      | Single source of truth, cloud-aware         |
-| **Logging**             | loguru                                 | Correlation ID in every line                |
-| **Retry**               | tenacity                               | 3× exponential backoff (2s → 10s)         |
-| **Testing**             | pytest + asyncio + cov                 | 78 tests, 82% coverage                      |
-| **Linting / Types**     | ruff + mypy                            | line-length=110                             |
-| **Containers (local)**  | Docker Compose                         | 4 services                                  |
-| **Containers (cloud)**  | HF Spaces + supervisord                | FastAPI + Streamlit co-located              |
-| **Image Registry**      | DockerHub                              | `ashrithr07/agentic-rag-engine`             |
-| **Image Arch**          | `linux/amd64`                          | Built via`docker buildx` from Apple Silicon |
-| **Process Manager**     | supervisord                            | Multi-process in single HF container        |
+| Layer | Tool | Notes |
+|---|---|---|
+| **Language** | Python 3.13 | `>=3.11` compliant |
+| **LLM** | Groq `llama-3.3-70b-versatile` | ~800 tok/s, 128k context, JSON mode |
+| **LLM SDK** | `groq>=0.9.0` | Async + sync, tenacity 3× retry |
+| **LLM Eval Backend** | `langchain-groq>=0.1.0` | RAGAS integration |
+| **PDF Parsing** | `pymupdf4llm>=0.0.17` | Markdown-preserving, table-aware |
+| **Chunking** | Custom classes | 4 strategies + AdaptiveChunker |
+| **NLP** | spaCy `en_core_web_sm` | Sentence segmentation |
+| **Token Counting** | `tiktoken` cl100k_base | Consistent across pipeline |
+| **Primary Embedding** | `BAAI/bge-base-en-v1.5` | 768-dim, MTEB 63.55, ~45ms/chunk CPU |
+| **Secondary Embedding** | `all-MiniLM-L6-v2` | 384-dim, MTEB 56.26, ~12ms/chunk CPU |
+| **Vector DB (local)** | Qdrant v1.9.2 (Docker) | gRPC + REST |
+| **Vector DB (cloud)** | Qdrant Cloud | Free 1GB persistent cluster |
+| **Client Pin** | `qdrant-client==1.9.2` | Must match server version |
+| **Sparse Retrieval** | `rank-bm25` (BM25Okapi) | Persisted index |
+| **Re-ranker** | `cross-encoder/ms-marco-MiniLM-L-6-v2` | ~150ms for 20 candidate pairs |
+| **Cache (local)** | Redis 7.2-alpine (Docker) | |
+| **Cache (cloud)** | Upstash Redis | SSL, free 10k cmds/day |
+| **Evaluation** | RAGAS + 6 custom metrics | 10 total metrics |
+| **API** | FastAPI + uvicorn | Fully async throughout |
+| **UI** | Streamlit + Plotly | 4 pages |
+| **Config** | Pydantic Settings | Single source of truth, cloud-aware |
+| **Logging** | loguru | Correlation ID in every line |
+| **Retry** | tenacity | 3× exponential backoff (2s → 10s) |
+| **Testing** | pytest + asyncio + cov | 78 tests, 82% coverage |
+| **Linting / Types** | ruff + mypy | line-length=110 |
+| **Containers (local)** | Docker Compose | 4 services |
+| **Containers (cloud)** | HF Spaces + supervisord | FastAPI + Streamlit co-located |
+| **Image Registry** | DockerHub | `ashrithr07/agentic-rag-engine` |
+| **Image Arch** | `linux/amd64` | Built via `docker buildx` from Apple Silicon |
+| **Process Manager** | supervisord | Multi-process in single HF container |
 
 ---
 
@@ -135,14 +136,13 @@ graph TD
 
 Every query is classified by a Groq LLM agent (JSON mode) before any retrieval begins. The router returns a structured `query_type` + `reasoning` and derives routing flags that control the entire downstream pipeline:
 
-
-| Query Type     | Retrieval Strategy        | Re-ranking | Avg Latency |
-| -------------- | ------------------------- | ---------- | ----------- |
-| `SIMPLE`       | Dense only                | None       | ~250ms      |
-| `ANALYTICAL`   | Hybrid RRF                | CE + MMR   | ~1100ms     |
-| `COMPARATIVE`  | Hybrid RRF                | CE + MMR   | ~1100ms     |
-| `MULTI_HOP`    | Hybrid RRF                | CE + MMR   | ~1200ms     |
-| `OUT_OF_SCOPE` | None — immediate refusal | None       | ~180ms      |
+| Query Type | Retrieval Strategy | Re-ranking | Avg Latency |
+|---|---|---|---|
+| `SIMPLE` | Dense only | None | ~250ms |
+| `ANALYTICAL` | Hybrid RRF | CE + MMR | ~1100ms |
+| `COMPARATIVE` | Hybrid RRF | CE + MMR | ~1100ms |
+| `MULTI_HOP` | Hybrid RRF | CE + MMR | ~1200ms |
+| `OUT_OF_SCOPE` | None — immediate refusal | None | ~180ms |
 
 `SIMPLE` queries skip hybrid retrieval and re-ranking, saving ~60% latency. Any prompt injection attempt — persona spoofing, system rule overrides, context ignoring — routes to `OUT_OF_SCOPE` and returns an immediate standardised rejection with zero retrieval cost. Router failure defaults to `ANALYTICAL` as a safe fallback.
 
@@ -204,13 +204,12 @@ avg_sentence_length > 25 words            →  SemanticChunker
 default                                   →  FixedChunker
 ```
 
-
-| Strategy            | Mechanism                                                                                   | Best For                                 |
-| ------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| **Fixed**           | tiktoken boundaries, 512 tokens, 102-token (20%) overlap                                    | General-purpose fallback, API references |
-| **Semantic**        | spaCy sentence segmentation, 400–600 token soft window                                     | Narrative text, research papers          |
-| **Hierarchical**    | Parses H1–H4 markdown headings;`parent_chunk_id` links child chunks back to parent section | Structured manuals, textbooks            |
-| **Structure-Aware** | Tables and code blocks treated as atomic units — never split mid-block                     | Technical docs with mixed content        |
+| Strategy | Mechanism | Best For |
+|---|---|---|
+| **Fixed** | tiktoken boundaries, 512 tokens, 102-token (20%) overlap | General-purpose fallback, API references |
+| **Semantic** | spaCy sentence segmentation, 400–600 token soft window | Narrative text, research papers |
+| **Hierarchical** | Parses H1–H4 markdown headings; `parent_chunk_id` links child chunks back to parent section | Structured manuals, textbooks |
+| **Structure-Aware** | Tables and code blocks treated as atomic units — never split mid-block | Technical docs with mixed content |
 
 Chunk IDs are generated deterministically via `MD5(doc_id :: strategy :: chunk_index)`. This ensures evaluation benchmarks always resolve to the correct ingested vectors, eliminating the artificial MRR inflation caused by random UUID regeneration on each run.
 
@@ -346,12 +345,11 @@ cp .env.example .env
 make dev
 ```
 
-
-| Service              | URL                             |
-| -------------------- | ------------------------------- |
-| Streamlit Dashboard  | http://localhost:8501           |
-| FastAPI + Swagger UI | http://localhost:8000/docs      |
-| Qdrant Dashboard     | http://localhost:6333/dashboard |
+| Service | URL |
+|---|---|
+| Streamlit Dashboard | http://localhost:8501 |
+| FastAPI + Swagger UI | http://localhost:8000/docs |
+| Qdrant Dashboard | http://localhost:6333/dashboard |
 
 > **Note on Qdrant container:** `depends_on` uses `service_started` (not `service_healthy`) because the `qdrant/qdrant:v1.9.2` image is distroless — there is no `curl` or shell available for healthcheck commands.
 
@@ -515,16 +513,14 @@ Ingest a PDF document into the vector store.
 
 **Request:** `multipart/form-data`
 
-
-| Field            | Type   | Default | Description                                              |
-| ---------------- | ------ | ------- | -------------------------------------------------------- |
-| `file`           | File   | —      | PDF to ingest                                            |
-| `chunk_strategy` | string | `auto`  | `auto`, `fixed`, `semantic`, `hierarchical`, `structure` |
-| `chunk_size`     | int    | `512`   | Token size per chunk                                     |
-| `chunk_overlap`  | int    | `102`   | Token overlap between adjacent chunks                    |
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `file` | File | — | PDF to ingest |
+| `chunk_strategy` | string | `auto` | `auto`, `fixed`, `semantic`, `hierarchical`, `structure` |
+| `chunk_size` | int | `512` | Token size per chunk |
+| `chunk_overlap` | int | `102` | Token overlap between adjacent chunks |
 
 **Response:**
-
 ```json
 {
   "status": "success",
@@ -548,7 +544,6 @@ Ingest from a server-side file path. Useful for CLI and scripted workflows.
 Submit a natural language question against ingested documents.
 
 **Request:**
-
 ```json
 {
   "question": "What are the main chunking strategies?",
@@ -557,7 +552,6 @@ Submit a natural language question against ingested documents.
 ```
 
 **Response:**
-
 ```json
 {
   "correlation_id": "uuid4",
@@ -618,13 +612,12 @@ Returns the most recent saved `benchmark_report.json`.
 
 The Streamlit dashboard (`dashboard/`) has four pages accessible from the sidebar:
 
-
-| Page                     | What it shows                                                                                                                                             |
-| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Query Explorer**       | Submit queries; view cited answers, per-stage latency waterfall chart (Plotly), A/B comparison before/after re-ranking, and per-call token cost breakdown |
-| **Retrieval Metrics**    | Load or re-run the benchmark suite; Precision@K, Recall@K, F1@K, MRR, NDCG@K, and Hit Rate charts across all K values                                     |
-| **Chunking Comparison**  | Side-by-side comparison of all 4 chunking strategies on an uploaded document; token distribution box plots and chunk text previews                        |
-| **Hallucination Report** | Historical confidence score trend over time, flagged claim log with per-query audit breakdown, reliability rate                                           |
+| Page | What it shows |
+|---|---|
+| **Query Explorer** | Submit queries; view cited answers, per-stage latency waterfall chart (Plotly), A/B comparison before/after re-ranking, and per-call token cost breakdown |
+| **Retrieval Metrics** | Load or re-run the benchmark suite; Precision@K, Recall@K, F1@K, MRR, NDCG@K, and Hit Rate charts across all K values |
+| **Chunking Comparison** | Side-by-side comparison of all 4 chunking strategies on an uploaded document; token distribution box plots and chunk text previews |
+| **Hallucination Report** | Historical confidence score trend over time, flagged claim log with per-query audit breakdown, reliability rate |
 
 The sidebar includes document upload controls, ingestion status feedback, and a live API health indicator.
 
@@ -639,14 +632,13 @@ make test
 # 78 passed, 0 failed, 82% coverage (target: >70%)
 ```
 
-
-| Test File            | Scope                                                                              |
-| -------------------- | ---------------------------------------------------------------------------------- |
-| `test_ingestion.py`  | ChunkMetadata schema, doc_type_detector, all 4 chunkers + AdaptiveChunker          |
-| `test_retrieval.py`  | tiktoken tokenizer, BM25 indexing, RRF correctness                                 |
-| `test_reranking.py`  | Cross-encoder rank ordering, MMR no-duplicate guarantee                            |
-| `test_evaluation.py` | All metric edge cases: perfect retrieval, zero retrieval, partial overlap          |
-| `test_pipeline.py`   | End-to-end integration: ingest → query → citation resolve → hallucination audit |
+| Test File | Scope |
+|---|---|
+| `test_ingestion.py` | ChunkMetadata schema, doc_type_detector, all 4 chunkers + AdaptiveChunker |
+| `test_retrieval.py` | tiktoken tokenizer, BM25 indexing, RRF correctness |
+| `test_reranking.py` | Cross-encoder rank ordering, MMR no-duplicate guarantee |
+| `test_evaluation.py` | All metric edge cases: perfect retrieval, zero retrieval, partial overlap |
+| `test_pipeline.py` | End-to-end integration: ingest → query → citation resolve → hallucination audit |
 
 ---
 
@@ -655,7 +647,6 @@ make test
 `data/evaluation/test_dataset.json` — 100 annotated query-answer pairs generated by `llama-3.3-70b-versatile` via `test_dataset_generator.py`. Composition: 30 easy / 30 medium / 20 hard / 20 failure-mode queries.
 
 Each entry:
-
 ```json
 {
   "query_id": "uuid4",
@@ -672,13 +663,12 @@ Each entry:
 
 ### Retrieval Benchmark Results
 
-
-| Metric          | Dense Only | Hybrid (RRF) | Hybrid + Re-rank |
-| --------------- | ---------- | ------------ | ---------------- |
-| **Precision@5** | 0.72       | 0.81         | **0.87**         |
-| **MRR**         | 0.68       | 0.77         | **0.83**         |
-| **NDCG@5**      | 0.74       | 0.82         | **0.88**         |
-| **Hit Rate**    | 0.81       | 0.84         | **0.91**         |
+| Metric | Dense Only | Hybrid (RRF) | Hybrid + Re-rank |
+|---|---|---|---|
+| **Precision@5** | 0.72 | 0.81 | **0.87** |
+| **MRR** | 0.68 | 0.77 | **0.83** |
+| **NDCG@5** | 0.74 | 0.82 | **0.88** |
+| **Hit Rate** | 0.81 | 0.84 | **0.91** |
 
 Re-ranking with the MS-MARCO cross-encoder improves MRR by **+22%** over dense-only retrieval. Hybrid RRF fusion alone improves Hit Rate by **+3.7%**, recovering lexical matches that pure semantic search misses. The ~300ms re-ranking overhead (CE: ~150ms, MMR: ~80ms) is tracked per query in the A/B comparator alongside the NDCG improvement delta.
 
@@ -946,121 +936,3 @@ This project is licensed under the **MIT License**. See [LICENSE](LICENSE) for d
 - [BAAI](https://huggingface.co/BAAI) — `bge-base-en-v1.5` embedding model (MTEB 63.55)
 - [Microsoft](https://huggingface.co/cross-encoder) — MS-MARCO cross-encoder re-ranker
 - Cormack & Clarke (2009) — Reciprocal Rank Fusion paper (the basis for RRF k=60)
-
----
-
-# 🤖 Agentic RAG Engine
-
-> A production-grade Retrieval-Augmented Generation pipeline featuring hybrid
-> retrieval, cross-encoder re-ranking, intelligent agentic query routing, and
-> self-auditing hallucination detection.
-
-**Stack:** Python 3.13 · Groq (`llama-3.3-70b-versatile`) · Qdrant Cloud · Upstash Serverless Redis · FastAPI · Streamlit · Docker
-
----
-
-## 🚀 Live Hosted Demo
-
-
-| Service                     | Architecture Environment                                                                         |
-| --------------------------- | ------------------------------------------------------------------------------------------------ |
-| 📊**Interactive Dashboard** | [Agentic RAG Space on Hugging Face](https://huggingface.co/spaces/ashrithr07/agentic-rag-engine) |
-
-*Deployment Note: The entire engine scales via a public Hub on a Hugging Face Space utilizing a customized PyTorch/FastAPI `Dockerfile`. The Streamlit application interface runs publicly on mapped port `7860`, communicating natively with a headless FastAPI container instance tightly bound dynamically to `0.0.0.0:8000` via `supervisord`, secured from external payload injections.*
-
----
-
-## ✨ Features
-
-1. **Agentic Query Routing with Built-in Immunity:** An LLM router categorizes queries (`SIMPLE`, `ANALYTICAL`, `COMPARATIVE`, `MULTI_HOP`, `OUT_OF_SCOPE`). Attempted prompt injection triggers immediate refusal without wasting compute on irrelevant vector retrieval.
-2. **Two-Stage Hybrid Retrieval:** Combines semantic dense retrieval (bge-base) with sparse keyword search (BM25) fused natively via Reciprocal Rank Fusion (RRF). Finally, precisely re-ranked using an MS-MARCO Cross-Encoder and Maximal Marginal Relevance.
-3. **Self-Auditing Hallucination Detection:** Conducts adversarial pass checks analyzing each returned answer exclusively against retrieved contexts to spot ungrounded claims real-time. History and metrics instantly auto-hydrate back to your interactive UI.
-4. **Adaptive Chunking & Deterministic Evaluation MRR:** Employs MD5 hashing for dynamically injected document segments ensuring accurate dataset MRR generation mapping accurately across evaluating chunks.
-
----
-
-## 🏗️ Application Deployments & Infrastructure
-
-```mermaid
-graph TD
-    User([End User]) -->|HTTPS:7860| HF[Hugging Face Space]
-  
-    subgraph Container [Docker Environment - HF Space]
-        UI[Streamlit Dashboard]
-        API[FastAPI Backend - Port 8000]
-        Super[Supervisord]
-      
-        Super -->|Manages| UI
-        Super -->|Manages| API
-        UI -->|HTTP POST| API
-    end
-  
-    subgraph External Dependencies
-        Groq[Groq Cloud LLM]
-        Qdrant[(Qdrant Cloud Vector DB)]
-        Redis[(Upstash Serverless Redis)]
-    end
-  
-    API -->|Prompt & Inference| Groq
-    API -->|Vector Retrieval| Qdrant
-    API -->|Semantic Caching| Redis
-```
-
-## 🛠️ Quick Start
-
-```bash
-git clone https://github.com/ashrith-07/agentic-rag-engine
-cd agentic-rag-engine
-cp .env.example .env        # add your GROQ, QDRANT cloud, and UPSTASH redis API SECRETS
-```
-
-### Full Stack Deploy
-
-Run the entire production-grade framework efficiently utilizing the Hugging Face Docker configuration locally:
-
-```bash
-docker buildx build --platform linux/amd64 -f Dockerfile -t agentic-rag-engine:latest .
-docker run -p 7860:7860 --env-file .env agentic-rag-engine:latest
-```
-
-Services:
-
-- **Dashboard** → http://localhost:7860
-
-## 🧪 Evaluation Results & Testing
-
-*(Run the UI 'Generate Test Dataset' over an uploaded contextual PDF and hit 'Run Benchmark')*
-
-
-| Metric      | Dense Only | Hybrid (RRF) | Hybrid + Re-rank |
-| ----------- | ---------- | ------------ | ---------------- |
-| Precision@5 | 0.72       | 0.81         | 0.87             |
-| MRR         | 0.68       | 0.77         | 0.83             |
-| NDCG@5      | 0.74       | 0.82         | 0.88             |
-| Hit Rate    | 0.81       | 0.84         | 0.91             |
-
----
-
-## 📚 Repository Structure
-
-agentic-rag-engine/
-├── src/
-│   ├── pipeline.py          # RAGPipeline orchestrator (.ingest / .query)
-│   ├── config.py            # Pydantic Settings (Qdrant & Redis parser logic)
-│   ├── ingestion/           # PDF parser + 4 chunking strategies with MD5 ID Hashing
-│   ├── retrieval/           # Qdrant + BM25 + RRF + query router + cache
-│   ├── reranking/           # Cross-encoder + MMR + A/B comparator
-│   ├── llm/                 # Groq client + Guardrail Prompts + Hallucination
-│   ├── evaluation/          # Dynamic test generation + benchmark runner
-│   └── api/                 # FastAPI backend entrypoint (isolated)
-├── dashboard/               # Streamlit UI (Port 7860 via Supervisor)
-├── configs/                 # YAML parameter documentation
-├── data/                    # Clean eval & log directories
-├── ARCHITECTURE.md          # Deep-dive: decisions, hosting topology
-└── JUSTIFICATION.md         # Deterministic eval tracking & prompt safety
-
----
-
-## License
-
-MIT
