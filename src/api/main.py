@@ -141,16 +141,16 @@ async def health() -> HealthResponse:
     """
     # Qdrant
     try:
-        client = QdrantClient(host=settings.qdrant_host, port=settings.qdrant_port)
-        client.get_collections()
+        from src.pipeline import vector_store
+        vector_store._client.get_collections()
         qdrant_status = "healthy"
     except Exception as e:
         qdrant_status = f"unhealthy: {e}"
 
     # Redis
     try:
-        r = redis.Redis(host=settings.redis_host, port=settings.redis_port)
-        r.ping()
+        from src.retrieval.cache import embedding_cache
+        embedding_cache._client.ping()
         redis_status = "healthy"
     except Exception as e:
         redis_status = f"unhealthy: {e}"
