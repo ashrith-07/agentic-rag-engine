@@ -3,7 +3,12 @@ from typing import Any
 
 from groq import AsyncGroq, Groq
 from loguru import logger
-from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
+from tenacity import (
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_exponential,
+)
 
 from src.config import settings
 from src.utils.correlation_id import get_correlation_id

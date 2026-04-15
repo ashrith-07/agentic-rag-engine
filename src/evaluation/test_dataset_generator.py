@@ -169,7 +169,7 @@ def load_dataset(path: Path = _OUTPUT_PATH) -> list[dict]:
             f"Test dataset not found: {path}\n"
             "Run: make generate-dataset"
         )
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -178,8 +178,8 @@ if __name__ == "__main__":
     Entry point for: python -m src.evaluation.test_dataset_generator
     Ingests all PDFs in data/raw/ and generates the dataset.
     """
-    from src.ingestion.parser import parse_pdf
     from src.ingestion.chunker import chunk_document
+    from src.ingestion.parser import parse_pdf
     from src.utils.correlation_id import set_correlation_id
 
     set_correlation_id()

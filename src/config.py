@@ -1,7 +1,8 @@
 # src/config.py
-from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import Field
 from functools import lru_cache
+
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -12,12 +13,15 @@ class Settings(BaseSettings):
     # ── Qdrant ────────────────────────────────────────────────
     qdrant_host: str = "localhost"
     qdrant_port: int = 6333
+    qdrant_api_key: str | None = None          # ← ADD THIS
+    qdrant_use_https: bool = False              # ← ADD THIS
     primary_collection: str = "bge_chunks"
     secondary_collection: str = "minilm_chunks"
 
     # ── Redis ─────────────────────────────────────────────────
     redis_host: str = "localhost"
     redis_port: int = 6379
+    redis_password: str | None = None          # ← ADD THIS
     embedding_cache_ttl: int = 86400     # 24 hours
     query_cache_ttl: int = 3600          # 1 hour
 

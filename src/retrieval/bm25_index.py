@@ -1,7 +1,6 @@
 # src/retrieval/bm25_index.py
 import json
 import pickle
-import re
 import string
 from pathlib import Path
 
@@ -180,12 +179,12 @@ class BM25Index:
             instance._bm25 = saved["bm25"]
             instance._corpus_tokens = saved["corpus_tokens"]
 
-        with open(meta_path, "r", encoding="utf-8") as f:
+        with open(meta_path, encoding="utf-8") as f:
             meta = json.load(f)
 
         # Reconstruct minimal Chunk objects from saved metadata
-        from src.ingestion.metadata import ChunkMetadata
         from src.ingestion.chunker import Chunk
+        from src.ingestion.metadata import ChunkMetadata
 
         instance._chunks = [
             Chunk(

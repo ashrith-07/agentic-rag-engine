@@ -1,0 +1,29 @@
+# Evaluation configuration
+
+metrics:
+  k_values: [1, 3, 5, 10]
+  custom:
+    - Precision@K
+    - Recall@K
+    - F1@K
+    - MRR
+    - NDCG@K
+    - HitRate
+  ragas:
+    - faithfulness
+    - answer_relevancy
+    - context_precision
+    - context_recall
+
+test_dataset:
+  target_size: 100
+  composition:
+    easy: 30       # direct fact lookup
+    medium: 30     # multi-chunk synthesis
+    hard: 20       # cross-document reasoning
+    failure: 20    # out-of-scope, adversarial
+
+thresholds:
+  min_confidence_score: 0.7
+  min_ndcg_at_5: 0.70
+  min_mrr: 0.65

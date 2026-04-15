@@ -1,10 +1,10 @@
 # src/ingestion/parser.py
 import re
 from pathlib import Path
-from loguru import logger
 
-import pymupdf4llm
 import pymupdf
+import pymupdf4llm
+from loguru import logger
 
 from src.ingestion.metadata import ParsedDocument, compute_doc_id
 from src.utils.correlation_id import get_correlation_id
@@ -45,7 +45,7 @@ def _ocr_pdf(pdf_path: str, total_pages: int) -> tuple[str, list[dict]]:
             "Run: pip install pytesseract pdf2image  &&  brew install tesseract poppler"
         )
 
-    logger.info(f"Image-based PDF detected — running Tesseract OCR at 300 DPI")
+    logger.info("Image-based PDF detected — running Tesseract OCR at 300 DPI")
     images = convert_from_path(str(pdf_path), dpi=300, poppler_path=_POPPLER_PATH)
 
     pages: list[dict] = []

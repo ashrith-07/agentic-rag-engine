@@ -79,14 +79,15 @@ class RAGASEvaluator:
             return
 
         try:
+            from langchain_groq import ChatGroq
+            from ragas.llms import LangchainLLMWrapper
             from ragas.metrics import (
-                faithfulness,
                 answer_relevancy,
                 context_precision,
                 context_recall,
+                faithfulness,
             )
-            from ragas.llms import LangchainLLMWrapper
-            from langchain_groq import ChatGroq
+
             from src.config import settings
 
             llm = ChatGroq(

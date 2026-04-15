@@ -21,6 +21,8 @@ dependencies = [
 
     # Embeddings + ML
     "sentence-transformers>=3.0.0",
+    # Note: Docker builds use CPU-only torch via services/app/Dockerfile.
+    # Local development with GPU can swap to a CUDA variant manually.
     "torch>=2.0.0",
     "transformers>=4.40.0",
 
@@ -82,7 +84,7 @@ asyncio_mode = "auto"
 testpaths = ["tests"]
 
 [tool.ruff]
-line-length = 88
+line-length = 110
 target-version = "py311"
 
 [tool.ruff.lint]

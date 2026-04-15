@@ -1,7 +1,5 @@
-import pytest
 
 from src.evaluation.retrieval_metrics import (
-    RetrievalMetrics,
     aggregate_metrics,
     compute_metrics,
 )

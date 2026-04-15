@@ -1,0 +1,32 @@
+# Embedding model configuration
+
+models:
+  primary:
+    name: BAAI/bge-base-en-v1.5
+    dimensions: 768
+    mteb_score: 63.55
+    inference_cpu_ms: 45
+    best_for: "Technical and domain-specific text"
+    normalize: true
+
+  secondary:
+    name: all-MiniLM-L6-v2
+    dimensions: 384
+    mteb_score: 56.26
+    inference_cpu_ms: 12
+    best_for: "Speed-critical applications, general text"
+    normalize: true
+
+qdrant_collections:
+  bge_chunks:
+    vector_size: 768
+    distance: Cosine
+    hnsw_m: 16
+    hnsw_ef_construct: 100
+    indexing_threshold: 20000
+
+  minilm_chunks:
+    vector_size: 384
+    distance: Cosine
+
+batch_size: 32

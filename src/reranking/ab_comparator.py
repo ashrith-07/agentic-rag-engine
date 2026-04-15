@@ -14,6 +14,7 @@ Returns a structured comparison dict showing:
 Used in notebooks/04_reranking_analysis.ipynb and the Streamlit dashboard.
 """
 import time
+
 from loguru import logger
 
 from src.config import settings

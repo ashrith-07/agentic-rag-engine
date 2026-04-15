@@ -47,10 +47,10 @@ generate-dataset:
 	python -m src.evaluation.test_dataset_generator
 
 lint:
-	ruff check src/ tests/
+	.venv/bin/ruff check src/ tests/
 
 typecheck:
-	mypy src/
+	.venv/bin/mypy src/
 
 clean:
 	docker compose down -v

@@ -1,0 +1,35 @@
+# Chunking configuration
+# These values are documented here but read from .env via src/config.py
+
+default:
+  chunk_size: 512        # tokens — optimal for bge-base-en-v1.5
+  chunk_overlap: 102     # 20% of 512 — preserves cross-boundary context
+
+alternatives:
+  long_context:
+    chunk_size: 1024     # better recall for analytical queries
+    chunk_overlap: 205   # 20%
+  document_level:
+    chunk_size: 2048     # section-level matching only
+    chunk_overlap: 410   # 20%
+
+strategies:
+  fixed:
+    description: "Sliding window with tiktoken token counting"
+    best_for: "Uniform technical docs, API references"
+  semantic:
+    description: "spaCy sentence segmentation, paragraph-boundary aware"
+    best_for: "Narrative text, research papers, articles"
+    soft_limit_min: 400
+    soft_limit_max: 600
+  hierarchical:
+    description: "Markdown heading tree, parent_chunk_id linking"
+    best_for: "Structured documents, technical manuals, textbooks"
+  structure:
+    description: "Atomic table/code/list preservation"
+    best_for: "Mixed-content PDFs, developer documentation"
+
+auto_selector_thresholds:
+  table_density: 0.3     # → structure strategy
+  header_density: 0.2    # → hierarchical strategy
+  avg_sentence_length: 25  # words → semantic strategy

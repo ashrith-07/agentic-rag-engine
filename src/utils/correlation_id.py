@@ -1,6 +1,6 @@
 # src/utils/correlation_id.py
-from contextvars import ContextVar
 import uuid
+from contextvars import ContextVar
 
 # ContextVar is safe across async tasks — each request gets its own value
 _correlation_id: ContextVar[str] = ContextVar("correlation_id", default="no-request")

@@ -1,9 +1,11 @@
 # src/utils/timer.py
-import time
 import functools
-from typing import Callable, Any
+import time
+from collections.abc import Callable
 from contextlib import contextmanager
 from dataclasses import dataclass, field
+from typing import Any
+
 from loguru import logger
 
 from src.utils.correlation_id import get_correlation_id

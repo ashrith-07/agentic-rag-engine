@@ -84,7 +84,7 @@ class QueryResult:
             f"  Cost       : ${self.token_usage.total_cost_usd:.6f}",
             f"  Latency    : {self.trace.total_ms:.0f}ms",
             f"{'─' * 60}",
-            f"  Answer:\n",
+            "  Answer:\n",
             f"  {self.answer}",
             f"{'─' * 60}",
         ]

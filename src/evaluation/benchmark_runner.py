@@ -21,7 +21,7 @@ from pathlib import Path
 from loguru import logger
 
 from src.config import settings
-from src.evaluation.retrieval_metrics import compute_metrics, aggregate_metrics
+from src.evaluation.retrieval_metrics import aggregate_metrics, compute_metrics
 from src.evaluation.test_dataset_generator import load_dataset
 from src.retrieval.hybrid_retriever import hybrid_retriever
 from src.utils.correlation_id import set_correlation_id

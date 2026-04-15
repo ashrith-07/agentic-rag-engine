@@ -1,10 +1,10 @@
 # src/ingestion/doc_type_detector.py
 import re
 from dataclasses import dataclass
+
 from loguru import logger
 
 from src.ingestion.metadata import ParsedDocument
-
 
 # Chunking strategy names
 STRATEGY_FIXED = "fixed"

@@ -1,0 +1,37 @@
+# Retrieval configuration
+
+hybrid:
+  top_k_dense: 20        # candidates from Qdrant
+  top_k_sparse: 20       # candidates from BM25
+  rrf_k_constant: 60     # standard RRF constant (Cormack & Clarke 2009)
+
+reranking:
+  cross_encoder: cross-encoder/ms-marco-MiniLM-L-6-v2
+  top_k_rerank: 5        # final results passed to LLM
+  mmr_lambda: 0.7        # 1.0=pure relevance, 0.0=pure diversity
+
+cache:
+  embedding_ttl_seconds: 86400   # 24 hours
+  query_ttl_seconds: 3600        # 1 hour
+
+query_types:
+  SIMPLE:
+    use_hybrid: true
+    use_reranking: false
+    description: "Direct factual lookup — fast path"
+  ANALYTICAL:
+    use_hybrid: true
+    use_reranking: true
+    description: "Multi-passage synthesis"
+  COMPARATIVE:
+    use_hybrid: true
+    use_reranking: true
+    description: "Compare two or more entities"
+  MULTI_HOP:
+    use_hybrid: true
+    use_reranking: true
+    description: "Chain multiple facts"
+  OUT_OF_SCOPE:
+    use_hybrid: false
+    use_reranking: false
+    description: "Immediate refusal — no retrieval cost"

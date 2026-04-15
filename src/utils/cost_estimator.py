@@ -1,7 +1,6 @@
 # src/utils/cost_estimator.py
 from dataclasses import dataclass, field
 
-
 # Groq pricing (USD per million tokens) — pay-as-you-go rates
 # Source: https://groq.com/pricing  (update if Groq changes pricing)
 _PRICING: dict[str, dict[str, float]] = {

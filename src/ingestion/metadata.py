@@ -1,7 +1,8 @@
 # src/ingestion/metadata.py
-import uuid
 import hashlib
-from datetime import datetime, timezone
+import uuid
+from datetime import UTC, datetime
+
 from pydantic import BaseModel, Field
 
 
@@ -24,7 +25,7 @@ class ChunkMetadata(BaseModel):
     has_code: bool = False
     parent_chunk_id: str | None = None   # hierarchical only
     created_at: str = Field(
-        default_factory=lambda: datetime.now(timezone.utc).isoformat()
+        default_factory=lambda: datetime.now(UTC).isoformat()
     )
 
     def to_qdrant_payload(self) -> dict:

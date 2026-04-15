@@ -8,10 +8,10 @@ import spacy
 from loguru import logger
 
 from src.config import settings
+from src.ingestion.doc_type_detector import DocTypeResult, detect_doc_type
 from src.ingestion.metadata import ChunkMetadata, ParsedDocument
-from src.ingestion.doc_type_detector import detect_doc_type, DocTypeResult
-from src.utils.tokenizer import count_tokens, chunk_text_by_tokens
 from src.utils.correlation_id import get_correlation_id
+from src.utils.tokenizer import chunk_text_by_tokens, count_tokens
 
 
 @dataclass

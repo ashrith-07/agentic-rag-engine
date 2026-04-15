@@ -8,7 +8,6 @@ They verify the full ingest → query flow works correctly.
 
 import pytest
 
-from src.ingestion.metadata import ParsedDocument
 from src.pipeline import RAGPipeline
 from src.retrieval.bm25_index import bm25_index
 from src.retrieval.vector_store import vector_store

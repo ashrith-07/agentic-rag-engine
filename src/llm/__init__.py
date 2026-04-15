@@ -1,4 +1,9 @@
-from src.llm.citation_engine import Citation, CitationEngine, CitedAnswer, citation_engine
+from src.llm.citation_engine import (
+    Citation,
+    CitationEngine,
+    CitedAnswer,
+    citation_engine,
+)
 from src.llm.groq_client import GroqClient, groq_client
 from src.llm.hallucination_detector import (
     HallucinationDetector,

@@ -1,7 +1,6 @@
 # src/retrieval/cache.py
 import hashlib
 import pickle
-from typing import Any
 
 import numpy as np
 import redis
@@ -12,14 +11,23 @@ from src.utils.correlation_id import get_correlation_id
 
 
 def _make_redis_client() -> redis.Redis:
-    return redis.Redis(
+    from src.config import settings
+
+    kwargs = dict(
         host=settings.redis_host,
         port=settings.redis_port,
         db=0,
-        decode_responses=False,   # we store binary (pickled numpy arrays)
+        decode_responses=False,
         socket_connect_timeout=3,
         socket_timeout=3,
     )
+
+    # Cloud mode — Upstash requires password + SSL
+    if settings.redis_password:
+        kwargs["password"] = settings.redis_password
+        kwargs["ssl"] = True
+
+    return redis.Redis(**kwargs)
 
 
 class EmbeddingCache:
@@ -40,7 +48,7 @@ class EmbeddingCache:
         self._prefix = "emb:"
 
     def _key(self, text: str, model_name: str) -> str:
-        payload = f"{text}::{model_name}".encode("utf-8")
+        payload = f"{text}::{model_name}".encode()
         return self._prefix + hashlib.sha256(payload).hexdigest()
 
     def get(self, text: str, model_name: str) -> list[float] | None:
@@ -113,7 +121,7 @@ class QueryCache:
         self._prefix = "qry:"
 
     def _key(self, query: str, top_k: int, model_name: str) -> str:
-        payload = f"{query}::{top_k}::{model_name}".encode("utf-8")
+        payload = f"{query}::{top_k}::{model_name}".encode()
         return self._prefix + hashlib.sha256(payload).hexdigest()
 
     def get(self, query: str, top_k: int, model_name: str) -> list[dict] | None:

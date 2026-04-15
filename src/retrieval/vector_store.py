@@ -1,29 +1,39 @@
 # src/retrieval/vector_store.py
-from typing import Any
 
 from loguru import logger
 from qdrant_client import QdrantClient
 from qdrant_client.models import (
     Distance,
-    VectorParams,
-    PointStruct,
-    Filter,
     FieldCondition,
-    MatchValue,
+    Filter,
     HnswConfigDiff,
+    MatchValue,
     OptimizersConfigDiff,
+    PointStruct,
     ScoredPoint,
+    VectorParams,
 )
 
 from src.config import settings
 from src.ingestion.chunker import Chunk
-from src.retrieval.embeddings import embedding_engine
 from src.retrieval.cache import embedding_cache
+from src.retrieval.embeddings import embedding_engine
 from src.utils.correlation_id import get_correlation_id
 from src.utils.timer import timed
 
 
 def _make_client() -> QdrantClient:
+    from src.config import settings
+
+    # Cloud mode — uses HTTPS + API key
+    if settings.qdrant_api_key:
+        return QdrantClient(
+            url=f"https://{settings.qdrant_host}",
+            api_key=settings.qdrant_api_key,
+            timeout=30,
+        )
+
+    # Local mode — plain HTTP
     return QdrantClient(
         host=settings.qdrant_host,
         port=settings.qdrant_port,

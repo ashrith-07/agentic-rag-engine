@@ -2,9 +2,9 @@
 from loguru import logger
 
 from src.config import settings
-from src.retrieval.vector_store import vector_store
 from src.retrieval.bm25_index import bm25_index
 from src.retrieval.cache import query_cache
+from src.retrieval.vector_store import vector_store
 from src.utils.correlation_id import get_correlation_id
 from src.utils.timer import timed
 

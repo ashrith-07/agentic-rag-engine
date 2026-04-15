@@ -4,6 +4,7 @@ All tests import from here — keeps test files clean.
 """
 
 import pytest
+
 from src.ingestion.metadata import ChunkMetadata, ParsedDocument
 
 
