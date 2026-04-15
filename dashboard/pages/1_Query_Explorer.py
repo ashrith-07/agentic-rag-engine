@@ -53,7 +53,15 @@ if submitted and question.strip():
         st.subheader("Answer")
         render_query_type_badge(data.get("query_type", "UNKNOWN"))
         st.write("")
-        st.markdown(data.get("answer", "No answer returned."))
+        
+        if data.get("query_type") == "OUT_OF_SCOPE":
+            st.warning(
+                "🛡️ **Query Blocked by Guardrails**\n\n"
+                "Your question appears out-of-scope or attempts prompt injection. "
+                "Our agentic system utilizes strict zero-trust routing and only provides answers explicitly grounded in the uploaded documents."
+            )
+        else:
+            st.markdown(data.get("answer", "No answer returned."))
 
         citations = data.get("citations", [])
         if citations:
