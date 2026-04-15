@@ -92,3 +92,20 @@ to apply the most specific strategy first. Structure-aware chunking is more
 specific than hierarchical (it handles mixed content), which is more specific
 than semantic (it handles structured text), which is more specific than fixed
 (the universal fallback).
+
+## Security & Observability Rationale
+
+### Deterministic Chunk Identification (MD5)
+Earlier iterations generated completely randomized `uuid.uuid4()` identities per chunk during ingestion. When evaluation datasets (such as RAGAS dynamic generation) ran, the chunk IDs mismatched against the generated UUID references in the vector DB, yielding artificial `0.000` Mean Reciprocal Rank (MRR) and Hit Rate metrics.
+
+Moving the chunk generation to `hashlib.md5(f"{doc_id}::{strategy}::{chunk_index}".encode()).hexdigest()` solved the indexing alignment. A chunk dynamically sliced at evaluation identical to a chunk statically inserted via UI ingestion will now share the identical deterministic hash and guarantee metrics reliability seamlessly in production.
+
+### Guardrails on Prompt Injection (`QueryRouter`)
+Due to strict Hugging Face Spaces environment hosting and the agentic autonomy of the QA process, prompt injection forms real risk. The `QueryRouter` prompt (`src/llm/prompt_templates.py`) was hardened under an explicit `OUT_OF_SCOPE` definition. Any attempt to modify persona, spoof system rules, or ignore contextual instructions triggers immediate refusal. This bypasses the entire heavy hybrid retrieval+Rerank latency path, instantly failing closed at Streamlit UI.
+
+### Qdrant Cloud and Upstash Redis Parsing
+When deployed as a Docker container to Hugging Face Spaces via `supervisord`, raw `https://` environmental variables native to typical cloud dashboards broke TCP handshakes.
+*   **Qdrant:** `QDRANT_HOST` variables parsing is safely modified in `src/retrieval/vector_store.py` to prevent SSL confusion.
+*   **Redis Cache:** Strips `https` prefix directly in `src/retrieval/cache.py` eliminating `.ping()` connection drops.
+
+Both allow the system to operate on cloud infrastructure purely over the `docker` buildx layer securely rather than spinning up heavy DBs inside a severely un-provisioned virtual machine chunk.
