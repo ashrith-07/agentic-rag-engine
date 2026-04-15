@@ -8,6 +8,9 @@ import streamlit as st
 from dashboard.components.metric_cards import render_metric_row
 
 st.set_page_config(page_title="Hallucination Report", page_icon="🛡️", layout="wide")
+
+from dashboard.css import apply_minimal_theme
+apply_minimal_theme()
 st.title("🛡️ Hallucination Report")
 st.caption("Per-query confidence scores and flagged claims")
 
@@ -70,7 +73,7 @@ with st.expander("Paste API response to add to history"):
 
 history = load_history()
 if not history:
-    st.info("No query history yet. Run some queries from Query Explorer.")
+    st.info("👋 Welcome! You haven't run any queries yet. Go to the **Query Explorer** to ask a question, and its results will be tracked here.", icon="ℹ️")
     st.stop()
 
 st.divider()
@@ -133,11 +136,11 @@ fig.update_layout(
     yaxis=dict(range=[0, 1.05]),
     plot_bgcolor="rgba(0,0,0,0)",
     paper_bgcolor="rgba(0,0,0,0)",
-    font=dict(color="#94a3b8"),
+    font=dict(color="#475569"),
     height=320,
 )
-fig.update_xaxes(showgrid=True, gridcolor="#1e293b")
-fig.update_yaxes(showgrid=True, gridcolor="#1e293b")
+fig.update_xaxes(showgrid=True, gridcolor="#e2e8f0")
+fig.update_yaxes(showgrid=True, gridcolor="#e2e8f0")
 st.plotly_chart(fig, use_container_width=True)
 
 st.divider()
