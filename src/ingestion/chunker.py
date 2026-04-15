@@ -49,7 +49,13 @@ class BaseChunker(ABC):
         parent_chunk_id: str | None = None,
     ) -> ChunkMetadata:
         """Helper — build a ChunkMetadata for a chunk."""
+        import hashlib
+        # Create a deterministic chunk_id
+        payload = f"{doc.doc_id}::{strategy}::{chunk_index}".encode()
+        chunk_id = hashlib.md5(payload).hexdigest()
+        
         return ChunkMetadata(
+            chunk_id=chunk_id,
             doc_id=doc.doc_id,
             source_file=doc.source_file,
             page_number=page_number,
@@ -247,7 +253,10 @@ class HierarchicalChunker(BaseChunker):
 
             # If section text fits in one chunk
             if count_tokens(text) <= self.chunk_size:
-                chunk_id = str(uuid.uuid4())
+                import hashlib
+                payload = f"{doc.doc_id}::hierarchical::{chunk_idx}".encode()
+                chunk_id = hashlib.md5(payload).hexdigest()
+                
                 parent_id = parent_ids.get(depth - 1) if depth > 0 else None
 
                 meta = ChunkMetadata(
@@ -274,7 +283,10 @@ class HierarchicalChunker(BaseChunker):
                 sub_texts = chunk_text_by_tokens(text, self.chunk_size, self.overlap)
 
                 for sub_idx, sub_text in enumerate(sub_texts):
-                    chunk_id = str(uuid.uuid4())
+                    import hashlib
+                    payload = f"{doc.doc_id}::hierarchical::{chunk_idx}".encode()
+                    chunk_id = hashlib.md5(payload).hexdigest()
+                    
                     sub_title = f"{title} (part {sub_idx + 1})" if len(sub_texts) > 1 else title
 
                     meta = ChunkMetadata(
