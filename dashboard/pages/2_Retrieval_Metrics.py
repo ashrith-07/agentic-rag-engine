@@ -9,9 +9,6 @@ import streamlit as st
 from dashboard.components.metric_cards import render_metric_row
 
 st.set_page_config(page_title="Retrieval Metrics", page_icon="📊", layout="wide")
-
-from dashboard.css import apply_minimal_theme
-apply_minimal_theme()
 st.title("📊 Retrieval Metrics")
 st.caption("Evaluation results from your test dataset")
 
@@ -53,22 +50,11 @@ with col_run:
                     st.error(f"Benchmark failed: {resp.text}")
             except Exception as e:
                 st.error(f"Error: {e}")
-👋 Welcome! Load a past report or generate and run the benchmark to see results.", icon="ℹ️")
+
+report = st.session_state.get("benchmark_report")
+if not report:
+    st.info("Load a report or run the benchmark to see results.")
     st.stop()
-
-cfg = report.get("benchmark_config", {})
-metrics = report.get("retrieval_metrics", {})
-
-# Edge case: Report loaded, but 0 queries evaluated
-evaluated_queries = cfg.get("evaluated_queries", 0)
-if evaluated_queries == 0:
-    st.warning(
-        "**No queries were evaluated.**\n\n"
-        "This usually means the evaluation dataset is empty. "
-        "Please use the **'Generate Test Dataset'** button above to generate a dataset from your ingested documents, then **Run benchmark now**.",
-        icon="⚠️"
-    )
-    st.stop(
 
 cfg = report.get("benchmark_config", {})
 metrics = report.get("retrieval_metrics", {})
@@ -118,16 +104,16 @@ fig.update_layout(
     yaxis=dict(range=[0, 1.05]),
     plot_bgcolor="rgba(0,0,0,0)",
     paper_bgcolor="rgba(0,0,0,0)",
-    font=dict(color="#475569"),
+    font=dict(color="#94a3b8"),
     legend=dict(
         bgcolor="rgba(0,0,0,0)",
-        bordercolor="#cbd5e1",
+        bordercolor="#334155",
         borderwidth=1,
     ),
     height=380,
 )
-fig.update_xaxes(showgrid=True, gridcolor="#e2e8f0")
-fig.update_yaxes(showgrid=True, gridcolor="#e2e8f0")
+fig.update_xaxes(showgrid=True, gridcolor="#1e293b")
+fig.update_yaxes(showgrid=True, gridcolor="#1e293b")
 st.plotly_chart(fig, use_container_width=True)
 
 per_query = metrics.get("per_query", [])

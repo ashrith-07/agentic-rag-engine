@@ -6,9 +6,6 @@ import plotly.graph_objects as go
 import streamlit as st
 
 st.set_page_config(page_title="Chunking Comparison", page_icon="✂️", layout="wide")
-
-from dashboard.css import apply_minimal_theme
-apply_minimal_theme()
 st.title("✂️ Chunking Strategy Comparison")
 st.caption("Compare all 4 chunking strategies on your documents")
 
@@ -70,7 +67,7 @@ if run:
 
 results = st.session_state.get("chunking_results")
 if not results:
-    st.info("👋 Welcome! Select a document and click **Compare** to see results.", icon="ℹ️")
+    st.info("Select a document and click Compare to see results.")
     st.stop()
 
 doc_name = st.session_state.get("chunking_doc_name", "")
@@ -122,11 +119,11 @@ fig.update_layout(
     yaxis_title="Tokens per chunk",
     plot_bgcolor="rgba(0,0,0,0)",
     paper_bgcolor="rgba(0,0,0,0)",
-    font=dict(color="#475569"),
+    font=dict(color="#94a3b8"),
     height=380,
     showlegend=False,
 )
-fig.update_yaxes(showgrid=True, gridcolor="#e2e8f0")
+fig.update_yaxes(showgrid=True, gridcolor="#1e293b")
 st.plotly_chart(fig, use_container_width=True)
 
 st.divider()

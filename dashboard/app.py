@@ -7,9 +7,6 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-from dashboard.css import apply_minimal_theme
-apply_minimal_theme()
-
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 
 with st.sidebar:

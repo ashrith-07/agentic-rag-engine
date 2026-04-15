@@ -81,7 +81,7 @@ def render_citation_card(citation: dict) -> None:
     st.markdown(
         f"""
         <div style="
-            background: #f8fafc; border: 1px solid #e2e8f0;
+            background: #1e293b;
             border-left: 3px solid #3b82f6;
             border-radius: 6px;
             padding: 8px 14px;

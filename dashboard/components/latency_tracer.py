@@ -48,7 +48,7 @@ def render_waterfall(stages: dict[str, float], title: str = "Stage Latency") -> 
         yaxis=dict(autorange="reversed"),
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#475569"),
+        font=dict(color="#94a3b8"),
         height=max(200, len(labels) * 50 + 80),
         margin=dict(l=10, r=80, t=40, b=30),
         showlegend=False,

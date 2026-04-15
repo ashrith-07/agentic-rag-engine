@@ -10,9 +10,6 @@ from dashboard.components.metric_cards import (
 )
 
 st.set_page_config(page_title="Query Explorer", page_icon="💬", layout="wide")
-
-from dashboard.css import apply_minimal_theme
-apply_minimal_theme()
 st.title("💬 Query Explorer")
 st.caption("Ask questions against your ingested documents")
 
@@ -132,6 +129,4 @@ if submitted and question.strip():
         st.json(data)
 
 elif submitted:
-    st.warning("Please enter a question to ask.", icon="⚠️")
-else:
-    st.info("👋 Welcome! Type a question above and click **Ask** to query your documents.", icon="ℹ️")
+    st.warning("Please enter a question.")
