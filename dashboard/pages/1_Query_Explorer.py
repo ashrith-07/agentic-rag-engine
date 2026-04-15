@@ -39,6 +39,31 @@ if submitted and question.strip():
                 st.error(f"API error {resp.status_code}: {resp.text}")
                 st.stop()
             data = resp.json()
+            st.session_state["last_query_data"] = data
+            
+            # Auto-save to history for Hallucination Report
+            import json
+            from pathlib import Path
+            log_path = Path("data/logs/query_history.json")
+            history = st.session_state.get("query_history", [])
+            if not history and log_path.exists():
+                with open(log_path) as f:
+                    history = json.load(f)
+            history.append({
+                "query": data.get("query"),
+                "query_type": data.get("query_type"),
+                "confidence_score": data.get("hallucination", {}).get("confidence_score", 0),
+                "is_reliable": data.get("hallucination", {}).get("is_reliable", False),
+                "hallucinated_claims": data.get("hallucination", {}).get("hallucinated_claims", []),
+                "supported_claims": data.get("hallucination", {}).get("supported_claims", []),
+                "total_ms": data.get("trace", {}).get("total_ms", 0),
+                "cost_usd": data.get("token_usage", {}).get("total_cost_usd", 0),
+            })
+            st.session_state["query_history"] = history
+            log_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(log_path, "w") as f:
+                json.dump(history, f, indent=2)
+
         except httpx.ConnectError:
             st.error("Cannot connect to API. Is the server running?")
             st.stop()
@@ -46,6 +71,9 @@ if submitted and question.strip():
             st.error(f"Request failed: {e}")
             st.stop()
 
+# Render from session state if available, so it persists across page navigations
+data = st.session_state.get("last_query_data")
+if data:
     st.divider()
     col_left, col_right = st.columns([2, 1])
 
@@ -134,7 +162,13 @@ if submitted and question.strip():
                 st.caption(f"`{r['chunk_id'][:8]}` · {r['text_preview'][:80]}...")
 
     with st.expander("🔧 Raw API response"):
-        st.json(data)
+        import json
+        st.code(json.dumps(data, indent=2), language="json")
+
+    # Clear state if user wants to start over
+    if st.button("Clear Results"):
+        st.session_state.pop("last_query_data", None)
+        st.rerun()
 
 elif submitted:
     st.warning("Please enter a question.")
