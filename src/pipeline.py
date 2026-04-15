@@ -134,7 +134,6 @@ class RAGPipeline:
             logger.error(f"Failed to connect to Qdrant: {e}. Are HF Secret variables QDRANT_HOST and QDRANT_API_KEY set? Consider checking Hugging Face Space settings.")
             raise Exception("Failed to connect to Qdrant Cloud. Check HF Space Secrets.") from e
 
-        try:n            vector_store.ensure_collections()n        except Exception as e:n            logger.error(f"Failed to connect to Qdrant: {e}. Are HF Secret variables QDRANT_HOST and QDRANT_API_KEY set?")n            raise
 
 
         # Parse
