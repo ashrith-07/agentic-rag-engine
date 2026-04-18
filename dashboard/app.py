@@ -48,13 +48,20 @@ with st.sidebar:
     if uploaded and st.button("Ingest", use_container_width=True, type="primary"):
         import httpx
 
-        with st.spinner("Ingesting..."):
+        file_size_mb = len(uploaded.getvalue()) / (1024 * 1024)
+        if file_size_mb > 50:
+            st.info(
+                f"⏳ Large file detected ({file_size_mb:.0f} MB). "
+                "Ingestion may take several minutes — please keep this tab open."
+            )
+
+        with st.spinner("Ingesting — this may take a while for large PDFs…"):
             try:
                 resp = httpx.post(
                     f"{api_url}/ingest",
                     files={"file": (uploaded.name, uploaded.getvalue(), "application/pdf")},
                     data={"strategy": strategy},
-                    timeout=120,
+                    timeout=900,  # 15 min — large PDFs (1000+ pages) need time to parse/embed
                 )
                 if resp.status_code == 200:
                     result = resp.json()

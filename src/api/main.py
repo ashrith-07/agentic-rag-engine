@@ -7,6 +7,8 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 from qdrant_client import QdrantClient
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import Response
 
 from src.api.models import HealthResponse
 from src.api.routes import eval as eval_router
@@ -102,6 +104,25 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Raise upload body limit to 210 MB (UI shows 200 MB max)
+_MAX_UPLOAD_BYTES = 210 * 1024 * 1024  # 210 MB
+
+
+class LimitUploadSizeMiddleware(BaseHTTPMiddleware):
+    """Reject requests whose Content-Length exceeds the configured limit."""
+
+    async def dispatch(self, request: Request, call_next):
+        content_length = request.headers.get("content-length")
+        if content_length and int(content_length) > _MAX_UPLOAD_BYTES:
+            return Response(
+                content=f"File too large. Maximum allowed size is 200 MB.",
+                status_code=413,
+            )
+        return await call_next(request)
+
+
+app.add_middleware(LimitUploadSizeMiddleware)
 
 
 # ── Request logging middleware ────────────────────────────────────────────────

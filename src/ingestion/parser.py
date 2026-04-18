@@ -25,10 +25,18 @@ _POPPLER_PATH = "/opt/homebrew/bin"   # macOS Homebrew default
 def _is_image_pdf(doc: pymupdf.Document) -> bool:
     """
     Return True if the PDF has no extractable text (scanned/image-only).
-    Checks the first 3 pages — if all yield < 20 chars, treat as image PDF.
+
+    Samples up to 10 pages spread evenly across the document. A PDF is
+    considered image-based only if EVERY sampled page has < 20 chars of
+    text. This avoids misclassifying large text-heavy documents (books,
+    reports) that happen to have image-only cover / decorative pages.
     """
-    sample = min(3, len(doc))
-    char_counts = [len(doc[i].get_text("text").strip()) for i in range(sample)]
+    total = len(doc)
+    # Spread sample indices evenly so we cover the whole document
+    sample_count = min(10, total)
+    step = max(1, total // sample_count)
+    indices = list(dict.fromkeys(range(0, total, step)))[:sample_count]  # unique, ordered
+    char_counts = [len(doc[i].get_text("text").strip()) for i in indices]
     return all(c < 20 for c in char_counts)
 
 

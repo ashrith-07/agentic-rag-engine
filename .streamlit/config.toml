@@ -1,0 +1,12 @@
+[server]
+# Raise the file upload limit to 200 MB (matches the UI label).
+# Without this file Streamlit falls back to its compiled-in default which
+# can be lower on some versions.
+maxUploadSize = 200
+
+# Keep the request alive for up to 10 minutes so large PDFs (1000+ pages)
+# have time to be fully uploaded and ingested by the backend.
+maxMessageSize = 200
+
+[browser]
+gatherUsageStats = false
