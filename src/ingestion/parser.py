@@ -53,8 +53,14 @@ def _ocr_pdf(pdf_path: str, total_pages: int) -> tuple[str, list[dict]]:
             "Run: pip install pytesseract pdf2image  &&  brew install tesseract poppler"
         )
 
-    logger.info("Image-based PDF detected — running Tesseract OCR at 300 DPI")
-    images = convert_from_path(str(pdf_path), dpi=300, poppler_path=_POPPLER_PATH)
+    # 150 DPI balances OCR accuracy vs speed/memory for large documents.
+    # 300 DPI on 1000+ pages causes multi-hour waits and potential OOM.
+    dpi = 150
+    logger.info(
+        f"Image-based PDF detected — running Tesseract OCR at {dpi} DPI "
+        f"({total_pages} pages, this may take several minutes)"
+    )
+    images = convert_from_path(str(pdf_path), dpi=dpi, poppler_path=_POPPLER_PATH)
 
     pages: list[dict] = []
     full_text_parts: list[str] = []
