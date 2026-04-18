@@ -1,3 +1,13 @@
+---
+title: Agentic RAG Engine
+emoji: 🔍
+colorFrom: indigo
+colorTo: purple
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # Agentic RAG Engine
 
 > A production-grade Retrieval-Augmented Generation pipeline that doesn't just answer questions — it explains **why** it answered the way it did, **where** the information came from, and **how confident** it is.
