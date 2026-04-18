@@ -132,8 +132,12 @@ class RAGPipeline:
         try:
             if clear_existing:
                 logger.info(f"[{cid}] Clearing existing documents from vector store and BM25 index")
-                vector_store.delete_collection(settings.primary_collection)
-                vector_store.delete_collection(settings.secondary_collection)
+                for col in [settings.primary_collection, settings.secondary_collection]:
+                    try:
+                        vector_store.delete_collection(col)
+                    except Exception:
+                        pass  # It's fine if the collection doesn't exist yet
+                
                 vector_store.ensure_collections()
                 
                 bm25_index.build([])

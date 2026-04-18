@@ -67,7 +67,8 @@ class BM25Index:
         cid = get_correlation_id()
 
         if not chunks:
-            logger.warning(f"[{cid}] BM25: build called with empty chunk list")
+            logger.warning(f"[{cid}] BM25: build called with empty chunk list — clearing index")
+            self.clear()
             return
 
         self._chunks = chunks
@@ -83,6 +84,13 @@ class BM25Index:
         """
         all_chunks = self._chunks + new_chunks
         self.build(all_chunks)
+
+    def clear(self) -> None:
+        """Clear the full index from memory."""
+        self._bm25 = None
+        self._chunks = []
+        self._corpus_tokens = []
+        logger.info("BM25 index cleared in memory.")
 
     @timed("bm25_search")
     def search(self, query: str, top_k: int = 20) -> list[dict]:
@@ -137,6 +145,15 @@ class BM25Index:
 
     def save(self, index_path: Path = _INDEX_PATH, meta_path: Path = _META_PATH) -> None:
         """Persist the BM25 index and chunk metadata to disk."""
+        if not self.is_built and not self._chunks:
+            # If cleared, simply remove the cache files if they exist
+            if index_path.exists():
+                index_path.unlink()
+            if meta_path.exists():
+                meta_path.unlink()
+            logger.info("Cleared BM25 persisted files.")
+            return
+
         if not self.is_built:
             raise RuntimeError("Cannot save — index not built.")
 
