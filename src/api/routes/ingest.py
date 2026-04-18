@@ -14,15 +14,17 @@ router = APIRouter(prefix="/ingest", tags=["ingestion"])
 async def ingest_pdf(
     file: UploadFile = File(..., description="PDF file to ingest"),
     strategy: str = Form(default="auto"),
+    clear_existing: bool = Form(default=False, description="Clear existing documents from the database"),
 ) -> IngestResponse:
     """
     Upload and ingest a PDF document.
 
-    Parses, chunks, embeds, and indexes the document into Qdrant + BM25.
+    Parses, chunk, embeds, and indexes the document into Qdrant + BM25.
     Returns doc_id and chunk count.
 
     Supports strategy override: auto | fixed | semantic | hierarchical | structure
     """
+    from fastapi.concurrency import run_in_threadpool
     cid = set_correlation_id()
 
     if not file.filename or not file.filename.lower().endswith(".pdf"):
@@ -47,9 +49,14 @@ async def ingest_pdf(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"File save failed: {e}")
 
-    # Ingest
+    # Ingest using threadpool so we don't block the async event loop
     try:
-        result = pipeline.ingest(str(save_path), strategy=strategy)
+        result = await run_in_threadpool(
+            pipeline.ingest, 
+            str(save_path), 
+            strategy=strategy, 
+            clear_existing=clear_existing
+        )
     except FileNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
@@ -68,11 +75,13 @@ async def ingest_pdf(
 async def ingest_by_path(
     pdf_path: str = Form(..., description="Absolute or relative path to PDF"),
     strategy: str = Form(default="auto"),
+    clear_existing: bool = Form(default=False, description="Clear existing documents from the database"),
 ) -> IngestResponse:
     """
     Ingest a PDF already on the server filesystem.
     Used by `make ingest PDF=./data/raw/doc.pdf`.
     """
+    from fastapi.concurrency import run_in_threadpool
     cid = set_correlation_id()
 
     path = Path(pdf_path)
@@ -80,7 +89,12 @@ async def ingest_by_path(
         raise HTTPException(status_code=404, detail=f"File not found: {pdf_path}")
 
     try:
-        result = pipeline.ingest(str(path), strategy=strategy)
+        result = await run_in_threadpool(
+            pipeline.ingest, 
+            str(path), 
+            strategy=strategy, 
+            clear_existing=clear_existing
+        )
     except Exception as e:
         logger.error(f"[{cid}] Ingestion failed: {e}")
         raise HTTPException(status_code=500, detail=f"Ingestion failed: {e}")

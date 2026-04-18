@@ -44,6 +44,11 @@ with st.sidebar:
         ["auto", "fixed", "semantic", "hierarchical", "structure"],
         index=0,
     )
+    clear_docs = st.toggle(
+        "Clear previous documents", 
+        value=True, 
+        help="Check this to start a fresh session and prevent new queries from gathering context out of old PDFs."
+    )
 
     if uploaded and st.button("Ingest", use_container_width=True, type="primary"):
         import httpx
@@ -60,7 +65,10 @@ with st.sidebar:
                 resp = httpx.post(
                     f"{api_url}/ingest",
                     files={"file": (uploaded.name, uploaded.getvalue(), "application/pdf")},
-                    data={"strategy": strategy},
+                    data={
+                        "strategy": strategy,
+                        "clear_existing": str(clear_docs).lower()
+                    },
                     timeout=900,  # 15 min — large PDFs (1000+ pages) need time to parse/embed
                 )
                 if resp.status_code == 200:

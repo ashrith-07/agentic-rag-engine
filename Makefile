@@ -1,4 +1,4 @@
-.PHONY: dev qdrant redis test ingest eval generate-dataset lint typecheck clean help
+.PHONY: dev qdrant redis test ingest eval generate-dataset lint typecheck clean push deploy help
 
 help:
 	@echo "agentic-rag-engine"
@@ -13,6 +13,7 @@ help:
 	@echo "make lint             Ruff lint check"
 	@echo "make typecheck        Mypy type check"
 	@echo "make clean            Stop all containers + remove volumes"
+	@echo "make push             Push to GitHub + HF Spaces (triggers rebuild)"
 
 dev:
 	docker compose up --build
@@ -55,3 +56,11 @@ typecheck:
 clean:
 	docker compose down -v
 	@echo "Containers stopped and volumes removed."
+
+## Push to GitHub AND HF Spaces in one command
+push:
+	git push origin main
+	git push space main
+	@echo "✅ Pushed to GitHub + HF Spaces — rebuild triggered."
+
+deploy: push

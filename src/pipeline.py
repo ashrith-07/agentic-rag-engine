@@ -121,6 +121,7 @@ class RAGPipeline:
         pdf_path: str | Path,
         strategy: str = "auto",
         chunk_size: int | None = None,
+        clear_existing: bool = False,
     ) -> IngestResult:
         """
         Ingest a PDF document into the pipeline.
@@ -129,12 +130,20 @@ class RAGPipeline:
         logger.info(f"[{cid}] Ingesting: {pdf_path}")
 
         try:
-            vector_store.ensure_collections()
+            if clear_existing:
+                logger.info(f"[{cid}] Clearing existing documents from vector store and BM25 index")
+                vector_store.delete_collection(settings.primary_collection)
+                vector_store.delete_collection(settings.secondary_collection)
+                vector_store.ensure_collections()
+                
+                bm25_index.build([])
+                bm25_index.save()
+                self._ingested_chunks.clear()
+            else:
+                vector_store.ensure_collections()
         except Exception as e:
-            logger.error(f"Failed to connect to Qdrant: {e}. Are HF Secret variables QDRANT_HOST and QDRANT_API_KEY set? Consider checking Hugging Face Space settings.")
+            logger.error(f"Failed to connect to Qdrant: {e}. Are HF Secret variables QDRANT_HOST and QDRANT_API_KEY set?")
             raise Exception("Failed to connect to Qdrant Cloud. Check HF Space Secrets.") from e
-
-
 
         # Parse
         doc = parse_pdf(pdf_path)
