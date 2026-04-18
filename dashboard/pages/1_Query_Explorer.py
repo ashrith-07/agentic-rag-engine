@@ -13,7 +13,7 @@ st.set_page_config(page_title="Query Explorer", page_icon="💬", layout="wide")
 st.title("💬 Query Explorer")
 st.caption("Ask questions against your ingested documents")
 
-API_URL = st.session_state.get("api_url", "http://0.0.0.0:8000")
+API_URL = st.session_state.get("api_url", "http://127.0.0.1:8000")
 
 with st.form("query_form"):
     question = st.text_area(
