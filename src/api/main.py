@@ -167,6 +167,11 @@ async def health() -> HealthResponse:
         qdrant_status = "healthy"
     except Exception as e:
         qdrant_status = f"unhealthy: {e}"
+        if "403" in qdrant_status or "Forbidden" in qdrant_status:
+            qdrant_status += (
+                " Hint: add Space secrets QDRANT_HOST and QDRANT_API_KEY "
+                "(Settings → Variables and Secrets). Local .env is not used on Hugging Face."
+            )
 
     # Redis
     try:
